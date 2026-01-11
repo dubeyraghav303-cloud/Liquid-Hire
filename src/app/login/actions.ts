@@ -25,7 +25,7 @@ export async function login(formData: FormData) {
         console.error('Unexpected login error:', err)
         return { error: 'An unexpected error occurred during login' }
     }
-    redirect('/dashboard')
+    redirect('/settings')
 }
 
 export async function signup(formData: FormData) {
