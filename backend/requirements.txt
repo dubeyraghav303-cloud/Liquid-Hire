@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+google-generativeai
+python-multipart
+python-dotenv
+pymupdf
+python-jobspy
+pandas
