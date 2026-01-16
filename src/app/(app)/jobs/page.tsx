@@ -139,13 +139,7 @@ export default async function JobsPage({ searchParams }: Props) {
                 </span>
 
                 <div className="flex items-center gap-2">
-                  <Link
-                    href={`/jobs/${job.id || 'external'}/tailor?title=${encodeURIComponent(job.title)}&company=${encodeURIComponent(job.company || '')}&description=${encodeURIComponent(job.description || '')}`}
-                    className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100"
-                  >
-                    <Wand2 size={14} />
-                    Tailor
-                  </Link>
+                  <TailorButton job={job} />
                   {job.url ? (
                     <a
                       href={job.url}
