@@ -18,7 +18,8 @@ type Props = {
 async function fetchExternalJobs(query: string, location: string): Promise<Job[]> {
   try {
     const backendUrl = process.env.NEXT_PUBLIC_API_BASE ?? "http://127.0.0.1:8000";
-    const searchTerm = query.trim() || "software engineer";
+    const searchTerm = query.trim();
+    if (!searchTerm) return [];
     // Default location to "Remote" if empty, but allow user override
     const searchLocation = location.trim() || "Remote";
 
