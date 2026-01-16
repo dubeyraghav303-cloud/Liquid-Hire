@@ -1,4 +1,4 @@
-"use strict";
+"use client";
 
 import { Wand2 } from "lucide-react";
 import { useRouter } from "next/navigation";
