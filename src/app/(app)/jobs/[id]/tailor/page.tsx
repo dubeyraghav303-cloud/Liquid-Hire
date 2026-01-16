@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, use, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { experimental_useObject as useObject } from '@ai-sdk/react';
 import { z } from 'zod';
 import { ChevronRight, Download, Wand2, Briefcase, User, CheckCircle2 } from 'lucide-react';
@@ -62,6 +63,7 @@ const tailorSchema = z.object({
 export default function TailorPage({ params }: { params: Promise<{ id: string }> }) {
     // Use `use` to unwrap params in Next.js 15+
     const { id } = use(params);
+    const searchParams = useSearchParams();
 
     const [job, setJob] = useState<any>(null);
     const [profileName, setProfileName] = useState("Candidate");
@@ -92,8 +94,15 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
             const { data: jobData } = await supabase.from('jobs').select('*').eq('id', id).single();
             if (jobData) {
                 setJob(jobData);
+            } else if (searchParams.get('title')) {
+                // Populate from URL params (for external jobs)
+                setJob({
+                    title: searchParams.get('title') || "Unknown Role",
+                    company: searchParams.get('company') || "Unknown Company",
+                    description: searchParams.get('description') || "No description provided."
+                });
             } else {
-                // Fallback/Mock for demo (or handling external IDs if we had a store)
+                // Fallback/Mock for demo
                 setJob({
                     title: "Senior Product Engineer",
                     company: "Tech Corp",
