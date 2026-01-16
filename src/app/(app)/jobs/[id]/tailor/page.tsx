@@ -213,17 +213,19 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
                             <div>
                                 <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-100 pb-1">Professional Experience</h2>
                                 {object.experience_bullets?.map((exp, i) => (
-                                    <div key={i} className="mb-4 break-inside-avoid">
-                                        <div className="flex justify-between items-baseline mb-1">
-                                            <h3 className="text-sm font-bold text-slate-900">{exp.role}</h3>
-                                            <span className="text-xs text-slate-500 font-medium">{exp.company}</span>
+                                    exp ? (
+                                        <div key={i} className="mb-4 break-inside-avoid">
+                                            <div className="flex justify-between items-baseline mb-1">
+                                                <h3 className="text-sm font-bold text-slate-900">{exp.role}</h3>
+                                                <span className="text-xs text-slate-500 font-medium">{exp.company}</span>
+                                            </div>
+                                            <ul className="list-disc ml-4 space-y-1">
+                                                {exp.bullets?.map((b, j) => (
+                                                    <li key={j} className="text-xs text-slate-600 pl-1">{b}</li>
+                                                ))}
+                                            </ul>
                                         </div>
-                                        <ul className="list-disc ml-4 space-y-1">
-                                            {exp.bullets?.map((b, j) => (
-                                                <li key={j} className="text-xs text-slate-600 pl-1">{b}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
+                                    ) : null
                                 ))}
                             </div>
                         </div>

@@ -107,13 +107,13 @@ export default function RoastPage() {
                         {/* Left: Burn Score */}
                         <div className="border border-red-900/50 bg-red-950/10 p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
                             <div className="absolute inset-0 bg-red-500/5 blur-3xl animate-pulse" />
-                            <Flame className={`w-20 h-20 mb-4 ${burnColor(object.burn_score || 0)}`} />
+                            <Flame className={`w-20 h-20 mb-4 ${burnColor(object?.burn_score ?? 0)}`} />
                             <h2 className="text-2xl font-bold uppercase text-red-500 mb-2">Burn Score</h2>
-                            <div className={`text-8xl font-black ${burnColor(object.burn_score || 0)}`}>
-                                {object.burn_score ?? 0}
+                            <div className={`text-8xl font-black ${burnColor(object?.burn_score ?? 0)}`}>
+                                {object?.burn_score ?? 0}
                             </div>
                             <p className="text-red-400/60 text-xs mt-2 uppercase tracking-widest">
-                                {object.burn_score > 80 ? 'CRITICAL FAILURE' : object.burn_score > 50 ? 'MEDIOCRE AT BEST' : 'SURVIVABLE'}
+                                {(object?.burn_score ?? 0) > 80 ? 'CRITICAL FAILURE' : (object?.burn_score ?? 0) > 50 ? 'MEDIOCRE AT BEST' : 'SURVIVABLE'}
                             </p>
                         </div>
 
