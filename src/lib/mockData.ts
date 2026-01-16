@@ -82,6 +82,8 @@ export const SKILLS = [
 
 export const NAV_LINKS = [
   { label: "Overview", icon: "home", href: "/dashboard" },
+  { label: "Jobs", icon: "briefcase", href: "/jobs" },
+  { label: "Roast", icon: "flame", href: "/roast" },
   { label: "Settings", icon: "settings", href: "/settings" },
 ];
 

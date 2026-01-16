@@ -9,7 +9,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import { ArrowDownRight, ArrowUpRight, MoreHorizontal, Play, Briefcase } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, MoreHorizontal, Play, Briefcase, Wand2, Flame } from "lucide-react";
 import {
   FOCUSING_DATA,
   TASK_CARDS,
@@ -350,7 +350,7 @@ export default function DashboardPage() {
               </button>
 
               <button
-                onClick={() => router.push('/jobs')}
+                onClick={() => router.push('/jobs?q=internship')}
                 className="group relative overflow-hidden rounded-[30px] bg-white p-6 text-left shadow-sm ring-1 ring-slate-100 transition hover:shadow-md"
               >
                 <div className="relative z-10 flex flex-col justify-between h-full">
@@ -360,6 +360,36 @@ export default function DashboardPage() {
                   <div>
                     <p className="text-lg font-semibold text-slate-900">Find Internships</p>
                     <p className="text-xs text-slate-500">Browse open roles</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => router.push('/jobs')}
+                className="group relative overflow-hidden rounded-[30px] bg-white p-6 text-left shadow-sm ring-1 ring-slate-100 transition hover:shadow-md"
+              >
+                <div className="relative z-10 flex flex-col justify-between h-full">
+                  <div className="h-10 w-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4 transition group-hover:bg-emerald-100">
+                    <Wand2 size={20} />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-slate-900">Tailor Resume</p>
+                    <p className="text-xs text-slate-500">Resume Chameleon™</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => router.push('/roast')}
+                className="group relative overflow-hidden rounded-[30px] bg-white p-6 text-left shadow-sm ring-1 ring-slate-100 transition hover:shadow-md"
+              >
+                <div className="relative z-10 flex flex-col justify-between h-full">
+                  <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 mb-4 transition group-hover:bg-red-100">
+                    <Flame size={20} />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-slate-900">The Roast</p>
+                    <p className="text-xs text-slate-500">Burn your resume</p>
                   </div>
                 </div>
               </button>

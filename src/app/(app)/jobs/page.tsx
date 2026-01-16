@@ -1,4 +1,6 @@
 import { createSupabaseServerClient } from "@/utils/supabase/server";
+import { Briefcase, MapPin, Wand2 } from "lucide-react";
+import Link from "next/link";
 
 type Job = {
   id?: string | number;
@@ -105,9 +107,11 @@ export default async function JobsPage({ searchParams }: Props) {
               <div className="mb-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                      {job.title}
-                    </h3>
+                    <Link href={job.source === 'internal' ? `/jobs/${job.id}` : '#'} className="block">
+                      <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                        {job.title}
+                      </h3>
+                    </Link>
                     <p className="text-xs text-slate-500 mt-1">
                       {job.company ?? "Unknown company"}
                     </p>
@@ -133,20 +137,31 @@ export default async function JobsPage({ searchParams }: Props) {
                   {job.source}
                 </span>
 
-                {job.url ? (
-                  <a
-                    href={job.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-700"
-                  >
-                    Apply Now
-                  </a>
-                ) : (
-                  <button disabled className="rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-400">
-                    Coming Soon
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {job.source === "internal" && (
+                    <Link
+                      href={`/jobs/${job.id}/tailor`}
+                      className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100"
+                    >
+                      <Wand2 size={14} />
+                      Tailor
+                    </Link>
+                  )}
+                  {job.url ? (
+                    <a
+                      href={job.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-700"
+                    >
+                      Apply Now
+                    </a>
+                  ) : (
+                    <button disabled className="rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-400">
+                      Coming Soon
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

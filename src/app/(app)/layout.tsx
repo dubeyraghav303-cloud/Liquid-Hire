@@ -1,6 +1,6 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
-import { Bell, Calendar, Grid, Home, MessageSquare, Search, Settings } from "lucide-react";
+import { Bell, Calendar, Grid, Home, MessageSquare, Search, Settings, Briefcase, Flame } from "lucide-react";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
 import { HEADER_USER, NAV_LINKS } from "@/lib/mockData";
@@ -18,6 +18,8 @@ const iconMap: Record<string, ReactNode> = {
   calendar: <Calendar size={18} />,
   message: <MessageSquare size={18} />,
   settings: <Settings size={18} />,
+  briefcase: <Briefcase size={18} />,
+  flame: <Flame size={18} />,
 };
 
 export default function AppLayout({ children }: { children: ReactNode }) {
