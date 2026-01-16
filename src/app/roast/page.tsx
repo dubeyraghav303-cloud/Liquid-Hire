@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { experimental_useObject as useObject } from 'ai/react';
+import { experimental_useObject as useObject } from '@ai-sdk/react';
 import { Upload, Flame, Share2, AlertTriangle, Terminal } from 'lucide-react';
 import { z } from 'zod';
 

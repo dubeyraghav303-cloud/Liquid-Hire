@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, use, useEffect } from 'react';
-import { experimental_useObject as useObject } from 'ai/react';
+import { experimental_useObject as useObject } from '@ai-sdk/react';
 import { z } from 'zod';
 import { ChevronRight, Download, Wand2, Briefcase, User, CheckCircle2 } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/utils/supabase/client';
