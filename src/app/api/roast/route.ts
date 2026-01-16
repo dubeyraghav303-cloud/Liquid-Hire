@@ -1,7 +1,8 @@
 import { google } from '@/lib/gemini';
 import { streamObject } from 'ai';
 import { z } from 'zod';
-import pdf from 'pdf-parse';
+// @ts-ignore
+const pdf = require('pdf-parse');
 
 export const runtime = 'nodejs';
 export const maxDuration = 60; // Allow longer timeouts for parsing/generation
