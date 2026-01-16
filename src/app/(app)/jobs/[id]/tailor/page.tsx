@@ -94,13 +94,28 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
             const { data: jobData } = await supabase.from('jobs').select('*').eq('id', id).single();
             if (jobData) {
                 setJob(jobData);
-            } else if (searchParams.get('title')) {
-                // Populate from URL params (for external jobs)
-                setJob({
-                    title: searchParams.get('title') || "Unknown Role",
-                    company: searchParams.get('company') || "Unknown Company",
-                    description: searchParams.get('description') || "No description provided."
-                });
+            } else if (id === 'external') {
+                // Try to get from sessionStorage
+                if (typeof window !== 'undefined') {
+                    const stored = sessionStorage.getItem('temp_tailor_job');
+                    if (stored) {
+                        try {
+                            const parsed = JSON.parse(stored);
+                            setJob(parsed);
+                        } catch (e) {
+                            console.error("Failed to parse stored job", e);
+                        }
+                    }
+                }
+
+                // If still no job (e.g. direct nav), try URL params as backup (for small descriptions)
+                if (!job && searchParams.get('title')) {
+                    setJob({
+                        title: searchParams.get('title') || "Unknown Role",
+                        company: searchParams.get('company') || "Unknown Company",
+                        description: searchParams.get('description') || "No description provided."
+                    });
+                }
             } else {
                 // Fallback/Mock for demo
                 setJob({

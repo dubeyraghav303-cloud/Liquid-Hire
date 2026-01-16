@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/utils/supabase/server";
 import { Briefcase, MapPin, Wand2 } from "lucide-react";
 import Link from "next/link";
+import TailorButton from "@/components/TailorButton";
 
 type Job = {
   id?: string | number;
