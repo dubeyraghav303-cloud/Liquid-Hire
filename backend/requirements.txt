@@ -8,5 +8,5 @@ uvicorn
 pydantic
 python-multipart
 PyMuPDF
-jobspy
+python-jobspy
 pandas
