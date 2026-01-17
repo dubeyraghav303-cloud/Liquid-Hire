@@ -135,9 +135,9 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
         schema: tailorSchema,
         onError: (err) => {
             console.error("Tailor Error:", err);
-            setErrorMsg("Failed to tailor resume. Please ensure you have uploaded a resume in Settings.");
+            setErrorMsg(`Tailor Failed: ${err.message || "Unknown error"}`);
             setHasStarted(false);
-        }
+        },
     });
 
     const handleTailor = () => {

@@ -21,7 +21,7 @@ export default function RoastPage() {
         schema: roastSchema,
         onError: (err) => {
             console.error("Roast Error:", err);
-            setErrorMsg("Failed to roast. Ensure your PDF is text-readable and try again.");
+            setErrorMsg(`Roast Failed: ${err.message || "Unknown error"}`);
             setIsScanning(false);
         },
         onFinish: () => {
