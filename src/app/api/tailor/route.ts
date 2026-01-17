@@ -40,6 +40,7 @@ export async function POST(req: Request) {
 
         const result = streamObject({
             model: groq(modelName),
+            // @ts-expect-error - 'mode' exists in runtime but types are mismatching
             mode: 'json',
             schema: tailorSchema,
             system: "You are a Resume Writer. Tailor the candidate's resume for the specific Job Description. Output strictly matching the schema.",
