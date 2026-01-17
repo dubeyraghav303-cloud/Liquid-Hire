@@ -22,11 +22,14 @@ export async function POST(req: Request) {
 
         let resumeText = '';
         try {
+            console.log("Parsing PDF buffer of size:", buffer.length);
             const pdfData = await pdf(buffer);
             resumeText = pdfData.text;
+            console.log("PDF Parsed successfully. Text length:", resumeText.length);
+            console.log("First 100 chars:", resumeText.substring(0, 100));
         } catch (e) {
-            console.error("PDF Parse Error", e);
-            return new Response('Failed to parse PDF', { status: 500 });
+            console.error("PDF Parse Error Stack:", e);
+            return new Response('Failed to parse PDF: ' + (e instanceof Error ? e.message : String(e)), { status: 500 });
         }
 
         if (!resumeText || resumeText.length < 50) {

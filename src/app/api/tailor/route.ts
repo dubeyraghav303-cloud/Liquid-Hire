@@ -17,14 +17,24 @@ export async function POST(req: Request) {
         }
 
         // Fetch user profile/resume info
-        const { data: profile } = await supabase
+        console.log("Fetching profile for user:", user.id);
+        const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('resume_text, full_name, context_json, experience_json') // Assuming these or similar fields exist, or just resume_text
+            .select('resume_text, full_name, context_json, experience_json')
             .eq('id', user.id)
             .single();
 
+        if (profileError) {
+            console.error("Profile Fetch Error:", profileError);
+            return new Response('Database Error fetching profile', { status: 500 });
+        }
+
+        console.log("Profile found:", profile ? "Yes" : "No");
+        console.log("Resume Text Length:", profile?.resume_text?.length || 0);
+
         if (!profile || !profile.resume_text) {
-            return new Response('Profile or Resume not found', { status: 404 });
+            console.error("Profile missing resume_text. Profile Object:", JSON.stringify(profile));
+            return new Response('Profile or Resume not found in database. Please upload in Settings.', { status: 404 });
         }
 
         const tailorSchema = z.object({
