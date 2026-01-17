@@ -5,4 +5,4 @@ export const groq = createOpenAI({
     apiKey: process.env.GROQ_API_KEY,
 });
 
-export const modelName = 'llama-3.1-8b-instant'; // Fast, smart, and generous free tier
+export const modelName = 'llama-3.3-70b-versatile'; // Fast, smart, and generous free tier

@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         const result = streamObject({
             model: groq(modelName),
             // @ts-expect-error - 'mode' exists in runtime
-            mode: 'tool',
+            mode: 'json',
             schema: roastSchema,
             system: "You are 'Liquid', a ruthless, sarcastic, elite tech recruiter from Silicon Valley. Roast this resume. Be mean but accurate.",
             prompt: `RESUME TEXT:

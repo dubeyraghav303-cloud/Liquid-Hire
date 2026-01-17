@@ -20,7 +20,7 @@ if GROQ_API_KEY:
 else:
     print("Warning: GROQ_API_KEY not set found environment variables.")
 
-MODEL_NAME = "llama-3.1-8b-instant"
+MODEL_NAME = "llama-3.3-70b-versatile"
 
 def generate_groq_response(messages, system_instruction=None, json_mode=False) -> Optional[str]:
     if not client:
