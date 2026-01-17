@@ -1,9 +1,11 @@
 fastapi
 uvicorn
 pydantic
-google-generativeai
-python-multipart
+groq
 python-dotenv
-pymupdf
-python-jobspy
+fastapi
+uvicorn
+pydantic
+PyMuPDF
+jobspy
 pandas
