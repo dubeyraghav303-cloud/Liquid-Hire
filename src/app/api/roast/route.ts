@@ -8,8 +8,19 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+    console.log("DEBUG: Roast API hit!");
     try {
-        const { fileBase64 } = await req.json();
+        const bodyText = await req.text(); // Read text first to debug payload
+        console.log("DEBUG: Roast Request Body Size:", bodyText.length);
+
+        let fileBase64;
+        try {
+            const json = JSON.parse(bodyText);
+            fileBase64 = json.fileBase64;
+        } catch (e) {
+            console.error("DEBUG: JSON Parse Error:", e);
+            return new Response('Invalid JSON body', { status: 400 });
+        }
 
         if (!fileBase64) {
             return new Response('No file data provided', { status: 400 });

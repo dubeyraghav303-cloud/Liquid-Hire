@@ -6,8 +6,10 @@ import { createSupabaseServerClient } from '@/utils/supabase/server';
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+    console.log("DEBUG: Tailor API hit!");
     try {
         const { jobDescription, jobId } = await req.json();
+        console.log("DEBUG: Tailor Payload received for Job:", jobId);
 
         const supabase = await createSupabaseServerClient();
         const { data: { user } } = await supabase.auth.getUser();
