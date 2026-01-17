@@ -12,31 +12,37 @@ const roastSchema = z.object({
 });
 
 export default function RoastPage() {
-    const [file, setFile] = useState<File | null>(null);
-    const [isScanning, setIsScanning] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const { object, submit, isLoading, error } = useObject({
         api: '/api/roast',
         schema: roastSchema,
+        onError: (err) => {
+            console.error("Roast Error:", err);
+            setErrorMsg("Failed to roast. Ensure your PDF is text-readable and try again.");
+            setIsScanning(false);
+        },
+        onFinish: () => {
+            setIsScanning(false);
+        }
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
+            setErrorMsg(null);
         }
     };
 
     const handleRoast = async () => {
         if (!file) return;
+        setErrorMsg(null);
         setIsScanning(true);
 
         const formData = new FormData();
         formData.append('file', file);
 
         submit(formData);
-
-        // Simulate scanning effect duration if needed, but 'submit' handles the stream
-        setTimeout(() => setIsScanning(false), 2000);
     };
 
     const burnColor = (score: number) => {
@@ -61,6 +67,14 @@ export default function RoastPage() {
                         LiquidHire // Brutal Career Coaching
                     </p>
                 </div>
+
+                {/* Error Message */}
+                {(error || errorMsg) && (
+                    <div className="w-full max-w-lg bg-red-950/30 border border-red-500/50 p-4 rounded-xl flex items-center gap-3 text-red-400">
+                        <AlertTriangle className="w-5 h-5 shrink-0" />
+                        <p className="text-sm font-bold">{errorMsg || "An unexpected error occurred. Check console."}</p>
+                    </div>
+                )}
 
                 {/* Input Zone - Only show if not loading/done */}
                 {!isLoading && !object && (

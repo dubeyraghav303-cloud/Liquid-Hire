@@ -29,6 +29,10 @@ export async function POST(req: Request) {
             return new Response('Failed to parse PDF', { status: 500 });
         }
 
+        if (!resumeText || resumeText.length < 50) {
+            return new Response('PDF is empty or not text-readable (scanned images are not supported).', { status: 400 });
+        }
+
         const roastSchema = z.object({
             roast_summary: z.string().describe("A ruthless, sarcastic, and funny summary of the resume."),
             burn_score: z.number().min(0).max(100).describe("A score from 0 to 100 indicating how bad the resume is."),

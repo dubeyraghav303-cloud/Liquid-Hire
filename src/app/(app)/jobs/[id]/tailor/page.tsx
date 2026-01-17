@@ -128,13 +128,21 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
         init();
     }, [id]);
 
-    const { object, submit, isLoading } = useObject({
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    const { object, submit, isLoading, error } = useObject({
         api: '/api/tailor',
         schema: tailorSchema,
+        onError: (err) => {
+            console.error("Tailor Error:", err);
+            setErrorMsg("Failed to tailor resume. Please ensure you have uploaded a resume in Settings.");
+            setHasStarted(false);
+        }
     });
 
     const handleTailor = () => {
         if (!job) return;
+        setErrorMsg(null);
         setHasStarted(true);
         submit({
             jobId: id,
@@ -199,12 +207,47 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
 
                 {/* Content Area */}
                 <div className="flex-1 overflow-y-auto p-8 relative">
-                    {!hasStarted && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                            <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-                                <User size={32} className="text-indigo-400" />
+                    {/* Default State */}
+                    {!hasStarted && !isLoading && !object && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center">
+                            {errorMsg ? (
+                                <div className="bg-red-50 p-6 rounded-2xl max-w-md border border-red-100 flex flex-col items-center">
+                                    <div className="bg-red-100 p-3 rounded-full mb-3 text-red-500">
+                                        <CheckCircle2 size={32} className="rotate-45" />
+                                        {/* Using CheckCircle heavily styled as X or just use simpler icon if available in import */}
+                                    </div>
+                                    <p className="text-red-600 font-semibold mb-2">Generation Failed</p>
+                                    <p className="text-sm text-red-500">{errorMsg}</p>
+                                    <button
+                                        onClick={() => setErrorMsg(null)}
+                                        className="mt-4 text-xs font-bold text-red-700 bg-red-100 px-3 py-1 rounded hover:bg-red-200 transition"
+                                    >
+                                        Dismiss
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                                        <User size={32} className="text-indigo-400" />
+                                    </div>
+                                    <p className="text-lg font-medium text-slate-600">Ready to Tailor</p>
+                                    <p className="text-sm mt-1">Click "Auto-Tailor" to rewrite your resume for this role.</p>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Loading State */}
+                    {isLoading && (
+                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm transition-all duration-500">
+                            <div className="relative">
+                                <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Wand2 size={24} className="text-indigo-600" />
+                                </div>
                             </div>
-                            <p>Click "Auto-Tailor" to rewrite your resume for this role.</p>
+                            <h3 className="mt-6 text-xl font-bold text-slate-800">Tailoring Your Resume...</h3>
+                            <p className="text-slate-500 mt-2 text-sm animate-pulse">Analyzing Job Description & Matching Skills</p>
                         </div>
                     )}
 
