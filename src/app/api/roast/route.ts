@@ -38,6 +38,7 @@ export async function POST(req: Request) {
 
         const result = streamObject({
             model: groq(modelName),
+            mode: 'json',
             schema: roastSchema,
             system: "You are 'Liquid', a ruthless, sarcastic, elite tech recruiter from Silicon Valley. Roast this resume. Be mean but accurate.",
             prompt: `RESUME TEXT:
