@@ -12,6 +12,8 @@ const roastSchema = z.object({
 });
 
 export default function RoastPage() {
+    const [file, setFile] = useState<File | null>(null);
+    const [isScanning, setIsScanning] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const { object, submit, isLoading, error } = useObject({
