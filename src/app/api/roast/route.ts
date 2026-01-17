@@ -9,16 +9,14 @@ export const maxDuration = 60; // Allow longer timeouts for parsing/generation
 
 export async function POST(req: Request) {
     try {
-        const formData = await req.formData();
-        const file = formData.get('file') as File;
+        const { fileBase64 } = await req.json();
 
-        if (!file) {
-            return new Response('No file uploaded', { status: 400 });
+        if (!fileBase64) {
+            return new Response('No file data provided', { status: 400 });
         }
 
         // Extract text from PDF
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const buffer = Buffer.from(fileBase64, 'base64');
 
         let resumeText = '';
         try {

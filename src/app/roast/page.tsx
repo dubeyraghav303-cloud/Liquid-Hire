@@ -41,10 +41,23 @@ export default function RoastPage() {
         setErrorMsg(null);
         setIsScanning(true);
 
-        const formData = new FormData();
-        formData.append('file', file);
+        try {
+            const base64 = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = error => reject(error);
+            });
 
-        submit(formData);
+            // Remove the data URL prefix (e.g., "data:application/pdf;base64,") to get just the base64 string
+            const base64Data = base64.split(',')[1];
+            submit({ fileBase64: base64Data });
+
+        } catch (err) {
+            console.error("File Read Error:", err);
+            setErrorMsg("Failed to read file.");
+            setIsScanning(false);
+        }
     };
 
     const burnColor = (score: number) => {
