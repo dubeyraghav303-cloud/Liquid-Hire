@@ -29,16 +29,18 @@ export async function POST(req: Request) {
         const buffer = Buffer.from(fileBase64, 'base64');
         let resumeText = '';
         try {
-            console.log("Parsing PDF...");
+            console.log("Parsing PDF... Buffer length:", buffer.length);
+            console.log("Buffer Header:", buffer.subarray(0, 10).toString());
             const pdfData = await pdf(buffer);
             resumeText = pdfData.text;
         } catch (e) {
             console.error("PDF Parse Error:", e);
-            return new Response('Failed to parse PDF', { status: 500 });
+            return new Response(`Failed to parse PDF: ${(e as Error).message}`, { status: 500 });
         }
 
         if (!resumeText || resumeText.length < 50) {
-            return new Response('PDF is empty or not text-readable.', { status: 400 });
+            console.log("Extracted Text:", resumeText);
+            return new Response(`PDF is empty or not text-readable. Length: ${resumeText?.length}`, { status: 400 });
         }
 
         const roastSchema = z.object({
