@@ -1,10 +1,23 @@
-import { type NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-    console.log(`[Middleware] ${request.method} ${request.nextUrl.pathname}`);
+    const path = request.nextUrl.pathname;
+
+    // Skip middleware for public routes to prevent timeouts
+    if (
+        path === '/' ||
+        path.startsWith('/login') ||
+        path.startsWith('/signup') ||
+        path.startsWith('/auth') ||
+        path.startsWith('/roast') ||
+        path.startsWith('/api/roast')
+    ) {
+        return NextResponse.next();
+    }
+
+    // console.log(`[Middleware] ${request.method} ${path}`);
     const response = await updateSession(request);
-    console.log(`[Middleware] Response Status: ${response.status}`);
     return response;
 }
 
