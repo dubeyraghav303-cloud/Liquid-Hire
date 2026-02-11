@@ -3,7 +3,7 @@ from io import BytesIO
 from typing import List, Literal, Optional
 
 import fitz  # PyMuPDF
-from groq import Groq
+import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,47 +11,72 @@ from pydantic import BaseModel
 
 
 load_dotenv()
+load_dotenv(".env.local")
 
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-client = None
-if GROQ_API_KEY:
-    client = Groq(api_key=GROQ_API_KEY)
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
 else:
-    print("Warning: GROQ_API_KEY not set found environment variables.")
+    print("Warning: GOOGLE_API_KEY not set in environment variables.")
 
-MODEL_NAME = "llama-3.3-70b-versatile"
+# Strict user request: use gemini-2.5-flash
+MODEL_NAME = "gemini-2.5-flash"
 
-def generate_groq_response(messages, system_instruction=None, json_mode=False) -> Optional[str]:
-    if not client:
-        return "Error: Groq API key missing."
+def generate_gemini_response(messages, system_instruction=None, json_mode=False) -> Optional[str]:
+    if not GOOGLE_API_KEY:
+        return "Error: Google API key missing."
     
     try:
-        # Prepare messages
-        all_messages = []
-        if system_instruction:
-            all_messages.append({"role": "system", "content": system_instruction})
-        
-        all_messages.extend(messages)
-
-        kwargs = {
-            "model": MODEL_NAME,
-            "messages": all_messages,
+        # Configure the model
+        generation_config = {
             "temperature": 0.6,
-            "max_tokens": 1024,
-            "top_p": 1,
-            "stop": None,
-            "stream": False
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 1024,
         }
         
         if json_mode:
-            kwargs["response_format"] = {"type": "json_object"}
+            generation_config["response_mime_type"] = "application/json"
 
-        completion = client.chat.completions.create(**kwargs)
-        return completion.choices[0].message.content
+        model = genai.GenerativeModel(
+            model_name=MODEL_NAME,
+            generation_config=generation_config,
+            system_instruction=system_instruction
+        )
+
+        # Convert chat history to Gemini format
+        # Gemini expects: [{'role': 'user', 'parts': [...]}, {'role': 'model', 'parts': [...]}]
+        gemini_history = []
+        last_user_message = ""
+
+        # Separate the last message if it's from user, to be the prompt
+        # But for chat history, we need to be careful about turn taking.
+        
+        # If messages list is passed, let's parse it.
+        # Check if the last message is from user
+        if messages and messages[-1]['role'] == 'user':
+             prompt = messages[-1]['content']
+             history_messages = messages[:-1]
+        else:
+             prompt = "Hello" # Fallback
+             history_messages = messages
+
+        for msg in history_messages:
+            role = "user" if msg['role'] == "user" else "model"
+            gemini_history.append({"role": role, "parts": [msg['content']]})
+
+        chat_session = model.start_chat(
+            history=gemini_history
+        )
+
+        response = chat_session.send_message(prompt)
+        return response.text
     except Exception as e:
-        print(f"Groq API Error: {e}")
+        print(f"Gemini API Error: {e}")
         return None
+
+
 
 
 class HistoryItem(BaseModel):
@@ -115,7 +140,7 @@ async def chat(state: InterviewState):
         if not messages:
              messages.append({"role": "user", "content": "I am ready for the interview. Please start."})
 
-    response_text = generate_groq_response(messages, system_instruction=sys_prompt)
+    response_text = generate_gemini_response(messages, system_instruction=sys_prompt)
     
     return {
         "next_question": response_text or "I'm unable to respond right now.",
@@ -159,7 +184,7 @@ async def end_interview(request: EndInterviewRequest):
     """
 
     try:
-        response_text = generate_groq_response(
+        response_text = generate_gemini_response(
             [{"role": "user", "content": prompt}], 
             system_instruction="You are a strict technical interviewer. Output valid JSON only.",
             json_mode=True
@@ -168,7 +193,7 @@ async def end_interview(request: EndInterviewRequest):
         if not response_text:
             raise Exception("Failed to generate report.")
 
-        print(f"DEBUG: Raw Groq response: {response_text}")
+        print(f"DEBUG: Raw Gemini response: {response_text}")
 
         # Parse JSON response
         import json

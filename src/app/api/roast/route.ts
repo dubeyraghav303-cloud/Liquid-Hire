@@ -1,4 +1,4 @@
-import { groq, modelName } from '@/lib/groq';
+import { gemini, modelName } from '@/lib/gemini';
 import { streamObject } from 'ai';
 import { z } from 'zod';
 // @ts-ignore
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         });
 
         const result = streamObject({
-            model: groq(modelName),
+            model: gemini(modelName),
             // @ts-expect-error - 'mode' exists in runtime
             mode: 'json',
             schema: roastSchema,
