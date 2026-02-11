@@ -32,7 +32,11 @@ export default function SettingsPage() {
     useEffect(() => {
         const fetchProfile = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+            if (!user) {
+                setLoading(false);
+                window.location.href = '/login';
+                return;
+            }
             setUserId(user.id);
 
             const { data: profile } = await supabase

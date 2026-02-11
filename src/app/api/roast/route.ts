@@ -59,8 +59,8 @@ ${resumeText.slice(0, 15000)}`,
 
         return result.toTextStreamResponse();
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Roast API Error:', error);
-        return new Response('Internal Server Error', { status: 500 });
+        return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 }

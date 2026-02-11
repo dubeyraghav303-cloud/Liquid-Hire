@@ -162,7 +162,10 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        window.location.href = '/login';
+        return;
+      }
 
       // 1. Fetch Profile
       const { data: profileData } = await supabase
