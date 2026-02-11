@@ -67,7 +67,7 @@ export default function RoastPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-green-500 font-mono p-4 md:p-10 relative overflow-hidden selection:bg-green-900 selection:text-white">
+        <div className="min-h-screen bg-black text-green-500 font-mono p-4 md:p-10 relative overflow-y-auto selection:bg-green-900 selection:text-white">
             {/* Background Glitch Effects (Simplified) */}
             <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-900 via-transparent to-transparent" />
 
