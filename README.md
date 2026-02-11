@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env.local` file.
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+GOOGLE_API_KEY=your-google-api-key
+NEXT_PUBLIC_API_BASE=http://localhost:8000 (or your backend URL)
+```
+
+**Important**: Ensure `NEXT_PUBLIC_SUPABASE_URL` is the **API URL** (e.g., `https://xyz.supabase.co`), NOT the dashboard URL.
