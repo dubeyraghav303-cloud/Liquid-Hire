@@ -10,8 +10,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
-load_dotenv()
-load_dotenv(".env.local")
+import pathlib
+env_path = pathlib.Path(__file__).parent.parent / ".env"
+env_local_path = pathlib.Path(__file__).parent.parent / ".env.local"
+load_dotenv(dotenv_path=env_path)
+load_dotenv(dotenv_path=env_local_path)
 
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -20,8 +23,8 @@ if GOOGLE_API_KEY:
 else:
     print("Warning: GOOGLE_API_KEY not set in environment variables.")
 
-# Strict user request: use gemini-2.5-flash
-MODEL_NAME = "gemini-2.5-flash"
+# Strict user request: use gemini-4-31b-it
+MODEL_NAME = "gemini-2.5-flash-lite"
 
 def generate_gemini_response(messages, system_instruction=None, json_mode=False) -> Optional[str]:
     if not GOOGLE_API_KEY:

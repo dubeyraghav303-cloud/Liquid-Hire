@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { experimental_useObject as useObject } from '@ai-sdk/react';
-import { Upload, Flame, Share2, AlertTriangle, Terminal } from 'lucide-react';
+import { Upload, Flame, Share2, AlertTriangle, Terminal, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
+import Link from 'next/link';
 
 const roastSchema = z.object({
     roast_summary: z.string(),
@@ -71,7 +72,13 @@ export default function RoastPage() {
             {/* Background Glitch Effects (Simplified) */}
             <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-900 via-transparent to-transparent" />
 
-            <main className="max-w-4xl mx-auto relative z-10 flex flex-col items-center gap-8">
+            {/* Back Button */}
+            <Link href="/dashboard" className="absolute top-6 left-6 z-50 flex items-center gap-2 text-green-500/70 hover:text-green-400 transition-colors bg-black/50 px-4 py-2 rounded-lg border border-green-900/50 hover:border-green-500/50">
+                <ArrowLeft className="w-4 h-4" />
+                <span className="font-bold uppercase tracking-widest text-xs">Abort</span>
+            </Link>
+
+            <main className="max-w-4xl mx-auto relative z-10 flex flex-col items-center gap-8 pt-10 md:pt-0">
 
                 {/* Header */}
                 <div className="text-center space-y-2">
@@ -79,7 +86,7 @@ export default function RoastPage() {
                         The <span className="text-red-600">Roast</span>
                     </h1>
                     <p className="text-green-700 uppercase tracking-widest text-xs md:text-sm">
-                        LiquidHire // Brutal Career Coaching
+                        Authin // Brutal Career Coaching
                     </p>
                 </div>
 

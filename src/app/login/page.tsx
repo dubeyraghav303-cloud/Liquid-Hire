@@ -5,13 +5,10 @@ import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/utils/supabase/client'
 import { login, signup } from './actions'
 
-type Role = 'candidate' | 'recruiter'
-
 export default function LoginPage() {
   const router = useRouter()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const supabase = createSupabaseBrowserClient()
-  const [role, setRole] = useState<Role>('candidate')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -24,7 +21,7 @@ export default function LoginPage() {
     const formData = new FormData()
     formData.append('email', email)
     formData.append('password', password)
-    formData.append('role', role)
+    formData.append('role', 'candidate')
 
     try {
       if (action === 'signup') {
@@ -50,60 +47,17 @@ export default function LoginPage() {
     }
   }
 
-  const onGoogle = async () => {
-    setLoading(true)
-    setMessage(null)
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    })
-    if (oauthError) {
-      setMessage({ type: 'error', text: oauthError.message })
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
       <div className="w-full max-w-xl rounded-3xl bg-white p-8 shadow-lg ring-1 ring-slate-100">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">LiquidHire</p>
-            <h1 className="mt-2 text-2xl font-semibold text-slate-900">Authentication</h1>
-          </div>
-          <div className="flex items-center gap-2 rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
-            <button
-              onClick={() => setRole('candidate')}
-              className={`rounded-full px-3 py-1 transition ${role === 'candidate' ? 'bg-white shadow-sm text-slate-900' : ''
-                }`}
-            >
-              Candidate
-            </button>
-            <button
-              onClick={() => setRole('recruiter')}
-              className={`rounded-full px-3 py-1 transition ${role === 'recruiter' ? 'bg-white shadow-sm text-slate-900' : ''
-                }`}
-            >
-              Recruiter
-            </button>
+        <div className="mb-8 flex flex-col items-center justify-between gap-6 md:flex-row">
+          <div className="text-center md:text-left">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Authin</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">Authentication</h1>
           </div>
         </div>
 
         <div className="space-y-4">
-          <button
-            onClick={onGoogle}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-300"
-            disabled={loading}
-          >
-            <span>Sign in with Google</span>
-          </button>
-
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <div className="h-px flex-1 bg-slate-200" />
-            or
-            <div className="h-px flex-1 bg-slate-200" />
-          </div>
-
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Email</label>

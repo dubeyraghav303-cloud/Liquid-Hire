@@ -13,9 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LiquidHire | Elevate Your Hiring Experience",
-  description:
-    "AI-powered recruitment platform blending trading-grade polish with modern hiring flows.",
+  title: "Authin | Elevate Your Hiring Experience",
+  description: "Advanced AI-powered candidate intelligence.",
 };
 
 export default function RootLayout({

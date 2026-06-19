@@ -1,7 +1,8 @@
 import { createSupabaseServerClient } from "@/utils/supabase/server";
-import { Briefcase, MapPin, Wand2 } from "lucide-react";
-import Link from "next/link";
-import TailorButton from "@/components/TailorButton";
+import JobSearchForm from "./JobSearchForm";
+import JobList from "./JobList";
+import { Suspense } from "react";
+import JobsLoading from "./loading";
 
 type Job = {
   id?: string | number;
@@ -50,13 +51,7 @@ async function fetchExternalJobs(query: string, location: string): Promise<Job[]
   }
 }
 
-export default async function JobsPage({ searchParams }: Props) {
-  // Await searchParams for Next.js 15+
-  const { q = "", location = "" } = await searchParams;
-
-  const query = q;
-  const loc = location;
-
+async function JobsContent({ query, loc }: { query: string, loc: string }) {
   const supabase = await createSupabaseServerClient();
 
   const { data: internalJobs = [] } = await supabase
@@ -72,102 +67,47 @@ export default async function JobsPage({ searchParams }: Props) {
     ...externalJobs,
   ];
 
+  return <JobList jobs={combined} query={query} location={loc} />;
+}
+
+export default async function JobsPage({ searchParams }: Props) {
+  // Await searchParams for Next.js 15+
+  const { q = "", location = "" } = await searchParams;
+
+  const query = q;
+  const loc = location;
+
   return (
     <div className="min-h-[calc(100vh-80px)] bg-slate-50 px-6 py-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <form className="flex flex-col gap-3 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Job search</p>
-            <h1 className="text-2xl font-semibold text-slate-900">Find your next role</h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <input
-              name="q"
-              defaultValue={query}
-              placeholder="Job title, keywords, or skills"
-              className="w-full md:w-64 rounded-2xl border border-slate-200 px-4 py-2 text-sm outline-none transition focus:border-slate-400"
-            />
-            <input
-              name="location"
-              defaultValue={loc}
-              placeholder="Preferred Location (e.g. Remote, NY)"
-              className="w-full md:w-52 rounded-2xl border border-slate-200 px-4 py-2 text-sm outline-none transition focus:border-slate-400"
-            />
-            <button className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
-              Search
-            </button>
-          </div>
-        </form>
+        
+        {/* Search Form component handles client-side form submissions and shows loading state on button */}
+        <JobSearchForm initialQuery={query} initialLocation={loc} />
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {combined.map((job) => (
-            <div
-              key={`${job.source}-${job.id ?? job.title}`}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100 transition hover:shadow-md"
-            >
-              <div className="mb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <Link href={job.source === 'internal' ? `/jobs/${job.id}` : '#'} className="block">
-                      <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                        {job.title}
-                      </h3>
-                    </Link>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {job.company ?? "Unknown company"}
-                    </p>
+        {/* Suspense boundary will trigger jobs/loading.tsx (or this fallback) when searchParams change! */}
+        <Suspense key={query + loc} fallback={
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-48 w-full animate-pulse rounded-3xl bg-white shadow-sm ring-1 ring-slate-100 p-5 flex flex-col justify-between">
+                <div>
+                  <div className="h-4 w-3/4 bg-slate-100 rounded-md mb-2" />
+                  <div className="h-3 w-1/2 bg-slate-100 rounded-md" />
+                </div>
+                <div className="flex justify-between border-t border-slate-50 pt-4">
+                  <div className="h-4 w-16 bg-slate-100 rounded-md" />
+                  <div className="flex gap-2">
+                    <div className="h-8 w-24 bg-slate-100 rounded-full" />
+                    <div className="h-8 w-24 bg-slate-100 rounded-full" />
                   </div>
-                  <span
-                    className={`rounded-full px-3 py-1 text-[10px] font-semibold ${job.source === "internal"
-                      ? "bg-indigo-50 text-indigo-700"
-                      : "bg-emerald-50 text-emerald-700"
-                      }`}
-                  >
-                    {job.location ?? "Remote"}
-                  </span>
-                </div>
-                {job.description && (
-                  <p className="mt-3 text-xs text-slate-400 line-clamp-2">
-                    {job.description}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between border-t border-slate-50 pt-4">
-                <span className="text-[10px] font-medium uppercase tracking-wider text-slate-300">
-                  {job.source}
-                </span>
-
-                <div className="flex items-center gap-2">
-                  <TailorButton job={job} />
-                  {job.url ? (
-                    <a
-                      href={job.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-700"
-                    >
-                      Apply Now
-                    </a>
-                  ) : (
-                    <button disabled className="rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-400">
-                      Coming Soon
-                    </button>
-                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        }>
+          <JobsContent query={query} loc={loc} />
+        </Suspense>
 
-          {combined.length === 0 && (
-            <div className="col-span-full rounded-3xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-100">
-              <p className="text-sm text-slate-500">No jobs found for "{query}" in "{loc || 'Remote'}".</p>
-              <p className="text-xs text-slate-400 mt-1">Try broadening your search.</p>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
 }
-

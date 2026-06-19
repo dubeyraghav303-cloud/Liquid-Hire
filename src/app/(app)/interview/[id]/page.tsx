@@ -5,25 +5,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-  ResponsiveContainer,
-} from "recharts";
-import {
   Camera,
-  Grid,
   Headphones,
-  Home,
   Mic,
   MicOff,
   PhoneOff,
   Settings,
   Video,
+  VideoOff,
 } from "lucide-react";
-import { INTERVIEW_CANDIDATES, RADAR_METRICS } from "@/lib/mockData";
 import { useProctoring } from "@/hooks/useProctoring";
 import { createSupabaseBrowserClient } from "@/utils/supabase/client";
 
@@ -323,7 +313,7 @@ export default function InterviewPage() {
 
   const requestMicrophone = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: true });
       stream.getTracks().forEach(t => t.stop());
       setMicOn(true);
       setVideoOn(true);
@@ -446,66 +436,63 @@ export default function InterviewPage() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // ...
-
   return (
-    <div className="relative grid min-h-[calc(100vh-80px)] grid-cols-12 gap-6 bg-slate-50">
-      {/* ... */}
-
+    <div className="relative min-h-[calc(100vh-80px)] bg-slate-50 p-6 flex flex-col items-center">
+      
       {/* Timer Display */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-white shadow-lg">
-        <span className={`text-sm font-bold ${timeLeft < 60 ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
+      <div className="absolute top-6 right-6 z-10 flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2 text-white shadow-lg ring-1 ring-white/10">
+        <span className={`text-sm font-bold tracking-wider ${timeLeft < 60 ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
           {formatTime(timeLeft)}
         </span>
-        <span className="text-xs text-slate-400">remaining</span>
+        <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">remaining</span>
       </div>
-
 
       {/* Role Modal */}
       {showRoleModal && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-            <h2 className="text-2xl font-bold text-slate-900">Start Interview</h2>
-            <p className="mt-2 text-sm text-slate-500">What role are you applying for?</p>
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl ring-1 ring-slate-900/5">
+            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Start Interview</h2>
+            <p className="mt-2 text-sm text-slate-500 font-medium">What role are you applying for?</p>
             <input
               autoFocus
-              className="mt-4 w-full rounded-2xl border border-slate-200 p-3 outline-none focus:border-indigo-500"
-              placeholder="e.g. Frontend Developer"
+              className="mt-6 w-full rounded-2xl border border-slate-200 p-4 text-sm font-medium outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-slate-50"
+              placeholder="e.g. Senior Frontend Developer"
               value={manualRole}
               onChange={e => setManualRole(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleRoleSubmit()}
             />
             <button
               onClick={handleRoleSubmit}
-              className="mt-6 w-full rounded-2xl bg-indigo-600 py-3 font-semibold text-white hover:bg-indigo-700"
+              className="mt-6 w-full rounded-2xl bg-indigo-600 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md"
             >
-              Begin Interview
+              Begin Interview Session
             </button>
           </div>
         </div>
       )}
 
-      {/* Left tools sidebar */}
-      <aside className="col-span-1 flex flex-col items-center gap-4 rounded-3xl bg-white py-6 shadow-sm ring-1 ring-slate-100">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white text-sm font-semibold">
-          LH
+      {/* Main Interview Area */}
+      <div className="w-full max-w-5xl flex-1 flex flex-col gap-6 mt-4">
+        
+        {/* Question card */}
+        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:shadow-md">
+          <div className="flex items-center gap-3">
+             <span className="relative flex h-2.5 w-2.5">
+               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isAiSpeaking ? 'bg-indigo-400' : 'bg-emerald-400'}`}></span>
+               <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isAiSpeaking ? 'bg-indigo-500' : 'bg-emerald-500'}`}></span>
+             </span>
+             <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+               {isAiSpeaking ? "AI is speaking" : "Your Turn (Speak now)"}
+             </p>
+          </div>
+          <p className="mt-4 text-xl font-medium text-slate-800 leading-relaxed">{currentQuestion}</p>
         </div>
-        {/* Unused buttons removed as per request */}
 
-        <div className="mt-auto">
-          <button
-            onClick={() => router.push('/settings')}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200 transition"
-          >
-            <Settings size={18} />
-          </button>
-        </div>
-      </aside>
-
-      {/* Center stage */}
-      <section className="col-span-12 lg:col-span-7 space-y-4">
-        <div className="relative h-[400px] rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 shadow-md">
-          <div className="relative flex h-full gap-4">
+        {/* Video Area */}
+        <div className="relative w-full flex-1 min-h-[500px] rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 shadow-xl ring-1 ring-slate-900/10 flex flex-col">
+          <div className="relative flex h-full gap-4 flex-col md:flex-row">
+            
+            {/* Candidate Video */}
             <div className="relative flex-1 overflow-hidden rounded-2xl bg-black/80">
               <Webcam
                 ref={webcamRef}
@@ -513,47 +500,59 @@ export default function InterviewPage() {
                 mirrored
                 onUserMedia={handleUserMedia}
                 onUserMediaError={(e) => console.error("Webcam/Audio Error:", e)}
-                className={`h-full w-full rounded-2xl object-cover transition-opacity ${videoOn ? 'opacity-100' : 'opacity-0'}`}
+                className={`h-full w-full object-cover transition-opacity duration-500 ${videoOn ? 'opacity-100' : 'opacity-0'}`}
                 videoConstraints={{ facingMode: "user" }}
               />
 
               {/* User Transcript Overlay */}
               {userTranscript && (
-                <div className="absolute inset-x-4 bottom-12 rounded-xl bg-black/60 p-4 text-center text-white backdrop-blur">
-                  <p className="text-sm font-medium">"{userTranscript}"</p>
+                <div className="absolute inset-x-8 bottom-24 rounded-2xl bg-black/60 p-5 text-center text-white backdrop-blur-md shadow-2xl transition-all duration-300">
+                  <p className="text-lg font-medium leading-relaxed">"{userTranscript}"</p>
                   {silenceCountdown !== null && (
-                    <p className="text-xs text-indigo-300 mt-1">Sending in {silenceCountdown}s...</p>
+                    <p className="text-sm font-semibold text-indigo-300 mt-2">Sending in {silenceCountdown}s...</p>
                   )}
-                  <p className="text-[10px] text-zinc-500 mt-1">Vol: {currentVolume.toFixed(0)}</p>
+                  <p className="text-xs text-zinc-400 mt-2">Vol: {currentVolume.toFixed(0)}</p>
                 </div>
               )}
 
               {/* Recording indicator */}
-              <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-rose-200 backdrop-blur">
-                <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
+              <div className="absolute left-6 top-6 flex items-center gap-2 rounded-full bg-black/50 px-4 py-1.5 text-xs font-semibold text-rose-200 backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
                 Recording
               </div>
             </div>
 
             {/* AI interviewer tile */}
-            <div className={`flex w-48 flex-col justify-between rounded-2xl p-3 text-slate-100 shadow-inner transition-colors ${isAiSpeaking ? 'bg-indigo-900/80 ring-2 ring-indigo-500' : 'bg-slate-900/70'}`}>
-              <div className="flex items-center gap-3">
-                <div className="relative h-10 w-10">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
+            <div className={`flex w-full md:w-72 flex-col justify-between rounded-2xl p-6 text-slate-100 shadow-inner transition-colors duration-500 ${isAiSpeaking ? 'bg-indigo-900/90 ring-2 ring-indigo-500 shadow-indigo-500/20' : 'bg-slate-900/80'}`}>
+              <div className="flex flex-col items-center gap-4 pt-8 text-center">
+                <div className="relative h-24 w-24">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg" />
                   {isAiSpeaking && <span className="absolute inset-0 rounded-full bg-indigo-400 animate-ping opacity-75" />}
+                  <div className="absolute inset-0 flex items-center justify-center text-white/50">
+                    <Headphones size={36} />
+                  </div>
                 </div>
-                <div className="leading-tight">
-                  <p className="text-sm font-semibold">AI Interviewer</p>
-                  <p className="text-[11px] text-slate-300">{isAiSpeaking ? "Speaking..." : "Listening..."}</p>
+                <div>
+                  <p className="text-xl font-bold tracking-tight">AI Interviewer</p>
+                  <p className="text-sm text-indigo-300 font-medium mt-1">{isAiSpeaking ? "Speaking..." : "Listening..."}</p>
                 </div>
               </div>
-              <div className="mt-4 space-y-1 text-[11px] text-slate-300">
+              <div className="mt-8 rounded-xl bg-black/20 p-5 text-sm text-slate-300 backdrop-blur-sm">
                 {isAiSpeaking ? (
-                  <p className="text-indigo-300">● Explaining question</p>
+                  <div className="flex items-center gap-3 text-indigo-300">
+                    <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+                    <p className="font-medium">Explaining question</p>
+                  </div>
                 ) : (
-                  <div className="space-y-1">
-                    <p className="text-emerald-300 animate-pulse">● Listening to you...</p>
-                    <p className="text-xs text-slate-400">Threshold: 15 | Level: {currentVolume.toFixed(0)}</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 text-emerald-400">
+                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <p className="font-medium">Listening to you...</p>
+                    </div>
+                    <div className="flex justify-between border-t border-white/10 pt-3 text-xs text-slate-400 font-medium">
+                      <span>Threshold: 15</span>
+                      <span>Level: {currentVolume.toFixed(0)}</span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -561,19 +560,19 @@ export default function InterviewPage() {
           </div>
 
           {/* Bottom controls */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
-            <div className="pointer-events-auto flex items-center gap-4 rounded-full bg-slate-900/80 px-6 py-3 text-slate-100 shadow-xl backdrop-blur">
+          <div className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center">
+            <div className="pointer-events-auto flex items-center gap-4 rounded-full bg-slate-900/90 px-8 py-3.5 text-slate-100 shadow-2xl backdrop-blur-md ring-1 ring-white/10">
               <button
                 onClick={toggleMic}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition ${micOn ? 'bg-slate-700' : 'bg-rose-500'}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${micOn ? 'bg-slate-700 hover:bg-slate-600' : 'bg-rose-500 hover:bg-rose-600'}`}
               >
-                {micOn ? <Mic size={18} /> : <MicOff size={18} />}
+                {micOn ? <Mic size={20} /> : <MicOff size={20} />}
               </button>
               <button
                 onClick={() => setVideoOn(!videoOn)}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition ${videoOn ? 'bg-slate-700' : 'bg-rose-500'}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${videoOn ? 'bg-slate-700 hover:bg-slate-600' : 'bg-rose-500 hover:bg-rose-600'}`}
               >
-                {videoOn ? <Video size={18} /> : <PhoneOff size={18} className="rotate-45" />}
+                {videoOn ? <Video size={20} /> : <VideoOff size={20} />}
               </button>
 
               {/* DONE SPEAKING BUTTON */}
@@ -584,20 +583,22 @@ export default function InterviewPage() {
                   handleUserAnswer(userTranscript);
                 }}
                 disabled={isAiSpeaking || !userTranscript.trim()}
-                className={`flex h-11 items-center gap-2 rounded-full px-5 text-sm font-bold shadow-lg transition
+                className={`flex h-12 items-center gap-2 rounded-full px-8 text-sm font-bold shadow-lg transition-all duration-300
                       ${(isAiSpeaking || !userTranscript.trim())
                     ? 'bg-slate-700 text-slate-400 opacity-50 cursor-not-allowed'
-                    : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}
+                    : 'bg-emerald-500 text-white hover:bg-emerald-600 hover:scale-105'}`}
               >
-                <span className="hidden md:inline">Done Speaking</span>
-                <span className="md:hidden">Done</span>
+                Done Speaking
               </button>
+
               {/* Helper Text */}
               {(!userTranscript.trim() && !isAiSpeaking && isListening) && (
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 rounded-md bg-black/60 px-2 py-1 text-xs text-white backdrop-blur">
+                <div className="absolute -top-14 left-1/2 -translate-x-1/2 rounded-lg bg-black/80 px-4 py-2 text-xs font-semibold tracking-wide text-white backdrop-blur-md animate-bounce">
                   Say something...
                 </div>
               )}
+
+              <div className="h-8 w-px bg-white/10 mx-2" />
 
               <button
                 onClick={async () => {
@@ -612,40 +613,16 @@ export default function InterviewPage() {
                   router.push('/dashboard');
                 }}
                 disabled={isEnding}
-                className={`flex h-11 w-11 items-center justify-center rounded-full transition ${isEnding ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-500 hover:bg-rose-600'}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${isEnding ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-500 hover:bg-rose-600 hover:rotate-12'}`}
                 title="End Interview"
               >
-                {isEnding ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <PhoneOff size={20} />}
+                {isEnding ? <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <PhoneOff size={20} />}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Question card */}
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-            {isAiSpeaking ? "AI is speaking" : "Your Turn (Speak now)"}
-          </p>
-          <p className="mt-3 text-sm text-slate-800 md:text-base">{currentQuestion}</p>
-        </div>
-      </section>
-
-      {/* Right analytics panel */}
-      <aside className="col-span-12 lg:col-span-4 space-y-4">
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100 h-full">
-          <p className="font-semibold text-slate-900">Live Analytics</p>
-          <div className="mt-4 h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={RADAR_METRICS}>
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10, fill: "#64748b" }} />
-                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar name="Score" dataKey="score" stroke="#6366f1" fill="#6366f1" fillOpacity={0.4} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </aside>
+      </div>
     </div>
   );
 }

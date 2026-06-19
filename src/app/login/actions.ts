@@ -5,12 +5,13 @@ import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
+    let target = '/dashboard'
     try {
         const supabase = await createSupabaseServerClient()
         const email = formData.get('email') as string
         const password = formData.get('password') as string
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error, data } = await supabase.auth.signInWithPassword({
             email,
             password,
         })
@@ -20,12 +21,19 @@ export async function login(formData: FormData) {
             return { error: error.message }
         }
 
+        if (data?.user) {
+            const { data: profile } = await supabase.from('profiles').select('full_name, date_of_birth, degree, stream, year_of_graduation, college, resume_text').eq('id', data.user.id).single()
+            if (!profile?.full_name || !profile?.date_of_birth || !profile?.degree || !profile?.stream || !profile?.year_of_graduation || !profile?.college || !profile?.resume_text) {
+                target = '/onboarding'
+            }
+        }
+
         revalidatePath('/', 'layout')
     } catch (err) {
         console.error('Unexpected login error:', err)
         return { error: 'An unexpected error occurred during login' }
     }
-    redirect('/settings')
+    redirect(target)
 }
 
 export async function signup(formData: FormData) {

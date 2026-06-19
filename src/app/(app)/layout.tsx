@@ -27,15 +27,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className={`${jakarta.className} min-h-screen bg-slate-50 text-slate-900`}>
       <div className="flex min-h-screen">
         <aside className="hidden w-20 flex-col items-center gap-6 border-r border-slate-200 bg-white/90 px-4 py-8 shadow-sm lg:flex">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 text-lg font-semibold text-white shadow-md">
-            LH
-          </div>
+          <img src="/logo.png" alt="Authin Logo" className="h-10 w-10 rounded-xl object-contain shadow-sm" />
           <div className="flex-1 space-y-3">
             {NAV_LINKS.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="flex items-center justify-center rounded-2xl p-3 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                className="group flex items-center justify-center rounded-2xl p-3 text-slate-500 transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600 hover:-translate-y-1 hover:shadow-sm"
                 aria-label={item.label}
               >
                 {iconMap[item.icon]}
