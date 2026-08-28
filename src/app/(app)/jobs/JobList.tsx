@@ -71,21 +71,23 @@ export default function JobList({ jobs, query, location }: { jobs: Job[], query:
               {job.source}
             </span>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
               {/* TailorButton is rendered here, ideally it gets its own maximalist styles if we can edit it, otherwise it stays functional */}
-              <TailorButton job={job} />
+              <div className="flex-1 sm:flex-none">
+                <TailorButton job={job} />
+              </div>
               
               {job.url ? (
                 <a
                   href={job.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="border-4 border-black bg-[#FF3366] px-6 py-3 text-sm font-black uppercase text-white transition-all hover:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+                  className="border-4 border-black bg-[#FF3366] px-6 py-3 text-sm font-black uppercase text-white transition-all hover:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 text-center flex-1 sm:flex-none"
                 >
                   APPLY NOW
                 </a>
               ) : (
-                <button disabled className="border-4 border-black bg-gray-300 px-6 py-3 text-sm font-black uppercase text-black/50 cursor-not-allowed shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <button disabled className="border-4 border-black bg-gray-300 px-6 py-3 text-sm font-black uppercase text-black/50 cursor-not-allowed shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full sm:w-auto text-center flex-1 sm:flex-none">
                   COMING SOON
                 </button>
               )}

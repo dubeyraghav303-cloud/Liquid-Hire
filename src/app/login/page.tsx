@@ -57,14 +57,14 @@ export default function LoginPage() {
         &larr; BACK
       </Link>
 
-      <div className="w-full max-w-xl border-8 border-black bg-[#00E5FF] p-8 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] relative z-10 animate-in fade-in zoom-in-95 slide-in-from-bottom-12 duration-700 hover:-translate-y-2 hover:shadow-[24px_24px_0px_0px_rgba(0,0,0,1)] transition-all">
+      <div className="w-full max-w-xl border-8 border-black bg-[#00E5FF] p-4 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] relative z-10 animate-in fade-in zoom-in-95 slide-in-from-bottom-12 duration-700 hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[24px_24px_0px_0px_rgba(0,0,0,1)] transition-all">
         <div className="mb-8 border-b-8 border-black pb-6 text-center">
           <p className="text-sm font-black uppercase tracking-[0.2em] text-black/70 animate-pulse">Authin</p>
-          <h1 className="mt-2 text-5xl font-black uppercase tracking-tight text-black hover:scale-105 transition-transform duration-300">ENTER <br/>THE ARENA</h1>
+          <h1 className="mt-2 text-4xl md:text-5xl font-black uppercase tracking-tight text-black hover:scale-105 transition-transform duration-300">ENTER <br/>THE ARENA</h1>
         </div>
 
         <div className="space-y-6">
-          <div className="space-y-6 bg-white p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="space-y-6 bg-white p-4 md:p-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="space-y-2">
               <label className="text-xl font-black uppercase text-black">Email</label>
               <input

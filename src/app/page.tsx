@@ -60,9 +60,9 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-6xl font-black uppercase leading-[0.9] text-black md:text-7xl lg:text-[6rem] tracking-tighter"
+                className="text-5xl font-black uppercase leading-[0.9] text-black md:text-7xl lg:text-[6rem] tracking-tighter"
               >
-                DOMINATE YOUR NEXT <span className="text-[#FF3366] mix-blend-multiply underline decoration-8 decoration-[#00E5FF]">INTERVIEW</span>
+                DOMINATE YOUR NEXT <span className="text-[#FF3366] mix-blend-multiply underline md:decoration-8 decoration-4 decoration-[#00E5FF]">INTERVIEW</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
@@ -244,8 +244,8 @@ export default function Home() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-5xl font-black uppercase md:text-7xl text-black leading-none">WHY AUTHIN <br/><span className="text-[#00E5FF] bg-black px-2 mt-2 inline-block">EXISTS</span></h2>
-              <p className="mt-8 text-xl font-bold text-black/80 leading-relaxed border-l-8 border-[#EAFF00] pl-6 bg-white p-6 border-y-4 border-r-4 border-t-black border-r-black border-b-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-4xl font-black uppercase md:text-7xl text-black leading-none">WHY AUTHIN <br/><span className="text-[#00E5FF] bg-black px-2 mt-2 inline-block">EXISTS</span></h2>
+              <p className="mt-8 text-lg md:text-xl font-bold text-black/80 leading-relaxed border-l-8 border-[#EAFF00] pl-6 bg-white p-6 border-y-4 border-r-4 border-t-black border-r-black border-b-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                 The job market is broken. Candidates send hundreds of resumes into the void and fail interviews without ever knowing why. 
                 <br/><br/>
                 We built Authin to give you the unfair advantage. By simulating the exact high-pressure environments of top tech companies, providing brutal, actionable feedback on your resume, and instantly tailoring your applications, we turn candidates into absolute top-tier hires.
@@ -273,8 +273,8 @@ export default function Home() {
              transition={{ duration: 0.8 }}
              className="text-center max-w-4xl mx-auto mb-20 px-4"
            >
-             <h2 className="text-5xl font-black uppercase md:text-7xl text-black">THE ULTIMATE ARSENAL</h2>
-             <p className="mt-6 text-2xl font-bold text-black/70 uppercase border-4 border-black bg-[#EAFF00] inline-block px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Bypass the ATS & crush the final round.</p>
+             <h2 className="text-4xl font-black uppercase md:text-7xl text-black">THE ULTIMATE ARSENAL</h2>
+             <p className="mt-6 text-xl md:text-2xl font-bold text-black/70 uppercase border-4 border-black bg-[#EAFF00] inline-block px-4 py-2 md:px-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Bypass the ATS & crush the final round.</p>
            </motion.div>
 
            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

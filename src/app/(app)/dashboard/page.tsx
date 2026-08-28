@@ -188,8 +188,8 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-8 border-black pb-8 mt-4">
         <div>
           <p className="text-lg font-black uppercase text-[#FF3366]">OVERVIEW</p>
-          <h1 className="text-5xl md:text-7xl font-black text-black tracking-tighter uppercase mt-2">
-            WHAT'S UP, <br/> {profile.full_name.split(" ")[0]}!
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-black tracking-tighter uppercase mt-2 break-words">
+            WHAT'S UP, <br className="hidden md:block"/> {profile.full_name.split(" ")[0]}!
           </h1>
         </div>
         <div className="flex items-center gap-3 font-black text-black uppercase bg-[#EAFF00] border-4 border-black px-6 py-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">

@@ -82,8 +82,8 @@ export default function RoastPage() {
 
                 {/* Header */}
                 <div className="text-center space-y-4 border-b-8 border-black pb-8 w-full animate-in fade-in slide-in-from-top-10 duration-700">
-                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black hover:scale-105 transition-transform cursor-default">
-                        THE <span className="bg-[#FF3366] text-white px-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] inline-block hover:-rotate-3 transition-transform">ROAST</span>
+                    <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase text-black hover:scale-105 transition-transform cursor-default">
+                        THE <span className="bg-[#FF3366] text-white px-2 md:px-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] inline-block hover:-rotate-3 transition-transform">ROAST</span>
                     </h1>
                     <p className="bg-[#EAFF00] border-4 border-black inline-block px-4 py-2 text-black font-black uppercase tracking-widest text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
                         BRUTAL CAREER COACHING
@@ -102,7 +102,7 @@ export default function RoastPage() {
 
                 {/* Input Zone - Only show if not loading/done */}
                 {!isLoading && !object && (
-                    <div className="w-full max-w-2xl border-8 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-12 flex flex-col items-center justify-center gap-8 hover:-translate-y-4 hover:shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group animate-in fade-in zoom-in-95 slide-in-from-bottom-12 duration-1000">
+                    <div className="w-full max-w-2xl border-8 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-6 md:p-12 flex flex-col items-center justify-center gap-8 hover:-translate-y-4 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group animate-in fade-in zoom-in-95 slide-in-from-bottom-12 duration-1000">
                         <input
                             type="file"
                             accept=".pdf"
@@ -112,9 +112,9 @@ export default function RoastPage() {
                         />
                         <label htmlFor="resume-upload" className="flex flex-col items-center cursor-pointer w-full">
                             <div className="border-4 border-black bg-[#EAFF00] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:bg-[#00E5FF] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                                <Upload className="w-16 h-16 text-black group-hover:animate-bounce" strokeWidth={3} />
+                                <Upload className="w-12 h-12 md:w-16 md:h-16 text-black group-hover:animate-bounce" strokeWidth={3} />
                             </div>
-                            <span className="text-3xl text-black mt-8 font-black uppercase tracking-tight text-center">
+                            <span className="text-2xl md:text-3xl text-black mt-8 font-black uppercase tracking-tight text-center">
                                 {file ? file.name : "DROP RESUME PDF HERE"}
                             </span>
                         </label>

@@ -406,9 +406,9 @@ export default function InterviewPage() {
       {/* Role Modal */}
       {showRoleModal && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg bg-white border-8 border-black p-10 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[24px_24px_0px_0px_rgba(0,0,0,1)] transition-all">
-            <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter mb-4 bg-[#00E5FF] inline-block px-4 py-2 border-4 border-black">START INTERVIEW</h2>
-            <p className="mt-4 text-xl font-bold text-black uppercase tracking-wide">WHAT ROLE ARE YOU APPLYING FOR?</p>
+          <div className="w-full max-w-lg bg-white border-8 border-black p-6 md:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[24px_24px_0px_0px_rgba(0,0,0,1)] transition-all">
+            <h2 className="text-3xl md:text-5xl font-black text-black uppercase tracking-tighter mb-4 bg-[#00E5FF] inline-block px-4 py-2 border-4 border-black">START INTERVIEW</h2>
+            <p className="mt-2 md:mt-4 text-lg md:text-xl font-bold text-black uppercase tracking-wide">WHAT ROLE ARE YOU APPLYING FOR?</p>
             <input
               autoFocus
               className="mt-6 w-full border-4 border-black bg-[#FFFBED] p-4 text-xl font-bold uppercase text-black placeholder:text-black/30 outline-none focus:ring-4 focus:ring-[#FF3366] focus:bg-white transition-all shadow-inner"
@@ -513,24 +513,24 @@ export default function InterviewPage() {
           </div>
 
           {/* Bottom controls */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-10 flex justify-center z-20">
-            <div className="pointer-events-auto flex items-center gap-6 border-8 border-black bg-white px-10 py-6 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 md:bottom-10 flex justify-center z-20 px-4">
+            <div className="pointer-events-auto flex items-center gap-2 md:gap-6 border-8 border-black bg-white px-4 md:px-10 py-4 md:py-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] w-full max-w-md md:max-w-none justify-center">
               
               <button
                 onClick={toggleMic}
-                className={`flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${micOn ? 'bg-[#00E5FF]' : 'bg-[#FF3366]'}`}
+                className={`flex h-12 w-12 md:h-16 md:w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shrink-0 ${micOn ? 'bg-[#00E5FF]' : 'bg-[#FF3366]'}`}
               >
-                {micOn ? <Mic size={28} className="stroke-[3] text-black" /> : <MicOff size={28} className="stroke-[3] text-white" />}
+                {micOn ? <Mic size={24} className="stroke-[3] text-black" /> : <MicOff size={24} className="stroke-[3] text-white" />}
               </button>
               
               <button
                 onClick={() => setVideoOn(!videoOn)}
-                className={`flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${videoOn ? 'bg-[#00E5FF]' : 'bg-[#FF3366]'}`}
+                className={`flex h-12 w-12 md:h-16 md:w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shrink-0 ${videoOn ? 'bg-[#00E5FF]' : 'bg-[#FF3366]'}`}
               >
-                {videoOn ? <Video size={28} className="stroke-[3] text-black" /> : <VideoOff size={28} className="stroke-[3] text-white" />}
+                {videoOn ? <Video size={24} className="stroke-[3] text-black" /> : <VideoOff size={24} className="stroke-[3] text-white" />}
               </button>
 
-              <div className="h-12 w-2 bg-black mx-2" />
+              <div className="h-10 md:h-12 w-2 bg-black mx-1 md:mx-2 shrink-0" />
 
               {/* DONE SPEAKING BUTTON */}
               <button
@@ -540,15 +540,15 @@ export default function InterviewPage() {
                   handleUserAnswer(userTranscript);
                 }}
                 disabled={isAiSpeaking || !userTranscript.trim()}
-                className={`flex h-16 items-center gap-2 px-10 text-xl font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all
+                className={`flex h-12 md:h-16 items-center gap-2 px-4 md:px-10 text-sm md:text-xl font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all flex-1 justify-center whitespace-nowrap
                       ${(isAiSpeaking || !userTranscript.trim())
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-[#EAFF00] text-black hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'}`}
               >
-                DONE SPEAKING
+                DONE <span className="hidden sm:inline">SPEAKING</span>
               </button>
 
-              <div className="h-12 w-2 bg-black mx-2" />
+              <div className="h-10 md:h-12 w-2 bg-black mx-1 md:mx-2 shrink-0" />
 
               <button
                 onClick={async () => {
@@ -562,10 +562,10 @@ export default function InterviewPage() {
                   router.push('/dashboard');
                 }}
                 disabled={isEnding}
-                className={`flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${isEnding ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'}`}
+                className={`flex h-12 w-12 md:h-16 md:w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all shrink-0 ${isEnding ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'}`}
                 title="End Interview"
               >
-                {isEnding ? <div className="h-6 w-6 animate-spin border-4 border-white border-t-transparent" /> : <PhoneOff size={28} className="stroke-[3] text-white" />}
+                {isEnding ? <div className="h-5 w-5 md:h-6 md:w-6 animate-spin border-4 border-white border-t-transparent" /> : <PhoneOff size={24} className="stroke-[3] text-white" />}
               </button>
 
             </div>
