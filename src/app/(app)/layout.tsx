@@ -8,32 +8,35 @@ import UserHeader from "@/components/UserHeader";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
 });
 
 const iconMap: Record<string, ReactNode> = {
-  home: <Home size={18} />,
-  grid: <Grid size={18} />,
-  calendar: <Calendar size={18} />,
-  message: <MessageSquare size={18} />,
-  settings: <Settings size={18} />,
-  briefcase: <Briefcase size={18} />,
-  flame: <Flame size={18} />,
+  home: <Home size={24} strokeWidth={3} />,
+  grid: <Grid size={24} strokeWidth={3} />,
+  calendar: <Calendar size={24} strokeWidth={3} />,
+  message: <MessageSquare size={24} strokeWidth={3} />,
+  settings: <Settings size={24} strokeWidth={3} />,
+  briefcase: <Briefcase size={24} strokeWidth={3} />,
+  flame: <Flame size={24} strokeWidth={3} />,
 };
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className={`${jakarta.className} min-h-screen bg-slate-50 text-slate-900`}>
-      <div className="flex min-h-screen">
-        <aside className="hidden w-20 flex-col items-center gap-6 border-r border-slate-200 bg-white/90 px-4 py-8 shadow-sm lg:flex">
-          <img src="/logo.png" alt="Authin Logo" className="h-10 w-10 rounded-xl object-contain shadow-sm" />
-          <div className="flex-1 space-y-3">
+    <div className={`${jakarta.className} min-h-screen bg-[#FFFBED] text-black selection:bg-[#FF3366] selection:text-white`}>
+      {/* Brutalist Grid Background */}
+      <div className="pointer-events-none fixed inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '40px 40px', zIndex: 0 }} />
+
+      <div className="flex min-h-screen relative z-10">
+        <aside className="hidden w-24 flex-col items-center gap-6 border-r-8 border-black bg-white px-4 py-8 shadow-[8px_0px_0px_0px_rgba(0,0,0,1)] lg:flex z-50">
+          <img src="/logo.png" alt="Authin Logo" className="h-12 w-12 border-4 border-black object-contain shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-[#EAFF00]" />
+          <div className="flex-1 space-y-4 w-full mt-4">
             {NAV_LINKS.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="group flex items-center justify-center rounded-2xl p-3 text-slate-500 transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600 hover:-translate-y-1 hover:shadow-sm"
+                className="group flex w-full items-center justify-center border-4 border-transparent p-3 text-black transition-all duration-300 hover:border-black hover:bg-[#00E5FF] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
                 aria-label={item.label}
               >
                 {iconMap[item.icon]}
@@ -42,18 +45,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </aside>
 
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col z-10">
           <UserHeader />
-          <main className="flex-1 px-5 pb-24 pt-6 lg:pb-10">{children}</main>
+          <main className="flex-1 px-4 sm:px-6 pb-24 pt-6 lg:pb-10">{children}</main>
         </div>
 
         {/* Bottom Navigation for Mobile */}
-        <nav className="fixed bottom-0 z-50 flex w-full justify-around border-t border-slate-200 bg-white/90 p-3 backdrop-blur lg:hidden">
+        <nav className="fixed bottom-0 z-50 flex w-full justify-around border-t-8 border-black bg-white p-3 shadow-[0px_-8px_0px_0px_rgba(0,0,0,1)] lg:hidden">
           {NAV_LINKS.map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="flex items-center justify-center rounded-2xl p-3 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+              className="flex items-center justify-center border-4 border-transparent p-3 text-black transition-all hover:border-black hover:bg-[#EAFF00] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
               aria-label={item.label}
             >
               {iconMap[item.icon]}

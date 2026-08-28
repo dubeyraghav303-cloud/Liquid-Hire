@@ -48,47 +48,49 @@ export default function UserHeader() {
     };
 
     return (
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-5 py-4 backdrop-blur">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b-8 border-black bg-[#00E5FF] px-5 py-4 shadow-[0px_8px_0px_0px_rgba(0,0,0,1)]">
             {/* Logo/Title */}
-            <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="Authin Logo" className="h-8 w-auto rounded-lg object-contain shadow-sm" />
-                <span className="text-lg font-bold text-slate-800 tracking-tight">Authin</span>
-                <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">Candidate Dashboard</span>
+            <div className="flex items-center gap-4">
+                <img src="/logo.png" alt="Authin Logo" className="h-10 w-10 border-4 border-black bg-white object-contain shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+                <div className="flex flex-col">
+                  <span className="text-2xl font-black uppercase text-black tracking-tighter leading-none">Authin</span>
+                  <span className="bg-[#EAFF00] border-2 border-black px-2 py-0.5 text-xs font-bold uppercase text-black w-fit mt-1">DASHBOARD</span>
+                </div>
             </div>
 
             <div className="flex items-center gap-4">
                 <div className="relative">
-                    <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-3 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50 hover:shadow-md">
-                        <div className="h-10 w-10 overflow-hidden rounded-full bg-slate-200 shadow">
+                    <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-3 border-4 border-black bg-white px-3 py-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+                        <div className="h-10 w-10 overflow-hidden border-2 border-black bg-black">
                             {profile?.avatar_url ? (
                                 <img src={profile.avatar_url} alt="Profile" className="h-full w-full object-cover" />
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-500 to-blue-500 text-sm font-semibold text-white">
+                                <div className="flex h-full w-full items-center justify-center bg-[#FF3366] text-sm font-black text-white uppercase">
                                     {initials}
                                 </div>
                             )}
                         </div>
-                        <div className="hidden leading-tight md:block text-left">
-                            <p className="text-sm font-semibold text-slate-900">
-                                {profile?.full_name || "Loading..."}
+                        <div className="hidden leading-none md:block text-left uppercase">
+                            <p className="text-sm font-black text-black">
+                                {profile?.full_name || "LOADING..."}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs font-bold text-black/70">
                                 {profile?.target_role || "..."}
                             </p>
                         </div>
                     </button>
                     {showDropdown && (
-                        <div className="absolute right-0 top-full mt-3 w-56 rounded-2xl bg-white p-4 shadow-xl ring-1 ring-slate-200 transition-all">
-                            <p className="text-sm font-bold text-slate-900 truncate">{profile?.full_name}</p>
-                            <p className="text-xs text-slate-500 mb-4 truncate">{profile?.target_role}</p>
+                        <div className="absolute right-0 top-full mt-3 w-56 border-4 border-black bg-white p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-50">
+                            <p className="text-lg font-black uppercase text-black truncate">{profile?.full_name}</p>
+                            <p className="text-sm font-bold uppercase text-black/60 mb-4 truncate">{profile?.target_role}</p>
                             <button
                                 onClick={() => {
                                     setShowDropdown(false);
                                     router.push('/settings');
                                 }}
-                                className="w-full rounded-xl bg-indigo-50 py-2.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
+                                className="w-full border-4 border-black bg-[#EAFF00] py-2.5 text-sm font-black uppercase text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
                             >
-                                Edit Profile
+                                EDIT PROFILE
                             </button>
                         </div>
                     )}
@@ -97,9 +99,9 @@ export default function UserHeader() {
                 <button
                     onClick={handleLogout}
                     title="Log Out"
-                    className="h-11 w-11 rounded-full bg-white text-slate-600 shadow-sm ring-1 ring-slate-200 transition hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center"
+                    className="h-12 w-12 border-4 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF3366] hover:text-white hover:shadow-none hover:translate-x-1 hover:translate-y-1 flex items-center justify-center transition-all"
                 >
-                    <LogOut size={18} />
+                    <LogOut size={20} strokeWidth={3} />
                 </button>
             </div>
         </header>

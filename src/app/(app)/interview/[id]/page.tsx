@@ -13,6 +13,7 @@ import {
   Settings,
   Video,
   VideoOff,
+  AlertTriangle
 } from "lucide-react";
 import { useProctoring } from "@/hooks/useProctoring";
 import { createSupabaseBrowserClient } from "@/utils/supabase/client";
@@ -36,16 +37,13 @@ export default function InterviewPage() {
   // Audio Context Ref
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  // Ensure the Uint8Array is backed by a plain ArrayBuffer to match
-  // the `AnalyserNode.getByteFrequencyData` signature which expects
-  // `Uint8Array<ArrayBuffer>` not `Uint8Array<ArrayBufferLike>`.
   const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
 
   // Data State
   const [resumeText, setResumeText] = useState("");
   const [jobRole, setJobRole] = useState("");
-  const [currentQuestion, setCurrentQuestion] = useState("Preparing your first question...");
+  const [currentQuestion, setCurrentQuestion] = useState("PREPARING YOUR FIRST QUESTION...");
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -59,7 +57,6 @@ export default function InterviewPage() {
   const [manualRole, setManualRole] = useState("");
   const [userTranscript, setUserTranscript] = useState("");
   const [silenceCountdown, setSilenceCountdown] = useState<number | null>(null);
-  // Debug toggle for threshold
   const [currentVolume, setCurrentVolume] = useState(0);
 
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -82,8 +79,6 @@ export default function InterviewPage() {
 
   const analyzeVolume = () => {
     if (!analyserRef.current || !dataArrayRef.current) return;
-    // TypeScript's DOM typings can require a stricter Uint8Array<ArrayBuffer>.
-    // Cast here to satisfy the analyzer API which expects a plain `Uint8Array`.
     analyserRef.current.getByteFrequencyData(dataArrayRef.current);
 
     let sum = 0;
@@ -108,7 +103,6 @@ export default function InterviewPage() {
 
         recognition.onresult = (event: any) => {
           let fullTranscript = "";
-          // CRITICAL FIX: Iterate from 0 to capture entire session history, not just new chunks
           for (let i = 0; i < event.results.length; ++i) {
             fullTranscript += event.results[i][0].transcript;
           }
@@ -119,9 +113,7 @@ export default function InterviewPage() {
 
         recognition.onend = () => {
           setIsListening(false);
-          // Auto-restart if we should still be listening
           if (micOn && !isAiSpeaking) {
-            console.log("Recognition ended, restarting...");
             startListening();
           }
         };
@@ -132,30 +124,22 @@ export default function InterviewPage() {
     return () => {
       if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       if (recognitionRef.current) {
-        recognitionRef.current.onend = null; // Prevent loop on unmount
+        recognitionRef.current.onend = null;
         recognitionRef.current.stop();
       }
       if (audioContextRef.current && audioContextRef.current.state !== "closed") {
         audioContextRef.current.close().catch(e => console.error("Error closing AudioContext:", e));
       }
     };
-  }, [micOn, isAiSpeaking]); // Added dependencies to closure
+  }, [micOn, isAiSpeaking]);
 
 
-
-  // NEW: Effect to monitor volume and reset timer ONLY if loud enough
   useEffect(() => {
-    // Threshold: 10 (out of 255) is roughly background noise. 
-    // User requested "higher decibel cap". Let's set it to 20 for safer gating.
     if (isListening && userTranscript) {
       if (currentVolume > 15) {
-        // It's loud enough to be speech, KICK the timer down the road
         resetSilenceTimer(userTranscript);
       } else {
-        // It's too quiet, let the timer burn!
-        // Do nothing means silenceTimer continues to countdown
         if (!silenceTimerRef.current) {
-          // Convert instant silence to 2s wait if we just dropped below threshold
           resetSilenceTimer(userTranscript);
         }
       }
@@ -163,7 +147,6 @@ export default function InterviewPage() {
   }, [currentVolume, isListening, userTranscript]);
 
 
-  // Manage Listen/speak state
   useEffect(() => {
     if (isAiSpeaking || !micOn) {
       stopListening();
@@ -177,16 +160,12 @@ export default function InterviewPage() {
       if (recognitionRef.current && !isListening) {
         recognitionRef.current.start();
         setIsListening(true);
-        console.log("Started listening...");
-
-        // Hook up audio analysis if we have a stream
         if (webcamRef.current?.video?.srcObject) {
           const stream = webcamRef.current.video.srcObject as MediaStream;
           initAudioAnalysis(stream);
         }
       }
     } catch (e) {
-      // Ignore, already started
     }
   };
 
@@ -194,7 +173,6 @@ export default function InterviewPage() {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       setIsListening(false);
-      console.log("Stopped listening.");
     }
     if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
     setSilenceCountdown(null);
@@ -205,12 +183,10 @@ export default function InterviewPage() {
     setSilenceCountdown(2);
 
     silenceTimerRef.current = setTimeout(() => {
-      console.log("Silence detected (Volume gated), submitting...");
       handleUserAnswer(text);
     }, 2000);
   };
 
-  // Countdown effect
   useEffect(() => {
     if (silenceCountdown === null) return;
     if (silenceCountdown > 0) {
@@ -228,11 +204,10 @@ export default function InterviewPage() {
     const newHistory = [...history, { role: "user" as const, content: answer }];
     setHistory(newHistory);
 
-    setCurrentQuestion("Thinking...");
+    setCurrentQuestion("THINKING...");
     await startInterview(resumeText, jobRole, newHistory, answer);
   };
 
-  // Manual Mic Toggle Handler
   const toggleMic = () => {
     const nextMicState = !micOn;
     if (!nextMicState && userTranscript.trim()) {
@@ -241,19 +216,15 @@ export default function InterviewPage() {
     setMicOn(nextMicState);
   };
 
-  // Media Track Handling
   useEffect(() => {
     if (webcamRef.current?.video?.srcObject) {
       const stream = webcamRef.current.video.srcObject as MediaStream;
       stream.getAudioTracks().forEach((t) => (t.enabled = micOn));
       stream.getVideoTracks().forEach((t) => (t.enabled = videoOn));
-
-      // Ensure analysis is hooked up if streams change/init
       if (micOn) initAudioAnalysis(stream);
     }
   }, [micOn, videoOn, webcamRef?.current?.video?.srcObject]);
 
-  // TTS Helper
   const speak = (text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
@@ -277,7 +248,6 @@ export default function InterviewPage() {
       if (!uid) return;
       setUserId(uid);
 
-      // Fetch profile safely
       const { data: profile } = await supabase
         .from("profiles")
         .select("resume_text")
@@ -287,22 +257,18 @@ export default function InterviewPage() {
       const resume = profile?.resume_text ?? "";
       setResumeText(resume);
 
-      // If we could fetch target_role we would, but for now we reset content
-      // Asking user for role is safer if schema is broken
       setShowRoleModal(true);
 
-      // Health check
       try {
         const health = await fetch(`${API_BASE}/api/health`);
         if (!health.ok) throw new Error("Health check failed");
       } catch (e) {
-        setCurrentQuestion("Error: Backend server is not reachable.");
+        setCurrentQuestion("ERROR: BACKEND SERVER IS NOT REACHABLE.");
       }
     };
     void init();
   }, [supabase]);
 
-  // Handle Role Selection
   const handleRoleSubmit = async () => {
     const role = manualRole || "Software Engineer";
     setJobRole(role);
@@ -346,7 +312,7 @@ export default function InterviewPage() {
       }
     } catch (err) {
       console.error("Failed to start interview:", err);
-      setCurrentQuestion("Error: Backend server issue.");
+      setCurrentQuestion("ERROR: BACKEND SERVER ISSUE.");
       setIsAiSpeaking(false);
     }
   };
@@ -359,7 +325,6 @@ export default function InterviewPage() {
     let jsonReport = [];
 
     try {
-      // 1. Generate Score & Summary via Backend
       const res = await fetch(`${API_BASE}/api/end-interview`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -378,11 +343,9 @@ export default function InterviewPage() {
       }
     } catch (e) {
       console.error("Error generating score/summary from backend:", e);
-      // Fallback: still save the interview even if scoring fails
     }
 
     try {
-      // 2. Save to Supabase
       const { error } = await supabase.from("interviews").insert({
         user_id: userId,
         transcript: history,
@@ -394,15 +357,12 @@ export default function InterviewPage() {
 
       if (error) {
         console.error("Supabase Insert Error:", error);
-      } else {
-        console.log("Interview saved successfully!");
       }
     } catch (dbError) {
       console.error("Unexpected DB saving error:", dbError);
     }
   };
 
-  // Ensure AudioContext is running (fix for "suspended" state)
   const resumeAudioContext = async () => {
     if (audioContextRef.current?.state === "suspended") {
       await audioContextRef.current.resume();
@@ -410,21 +370,17 @@ export default function InterviewPage() {
   };
 
   const handleUserMedia = (stream: MediaStream) => {
-    console.log("Webcam stream acquired:", stream.id);
     initAudioAnalysis(stream);
     resumeAudioContext();
   };
 
-  // Timer State
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
+  const [timeLeft, setTimeLeft] = useState(15 * 60);
 
-  // Timer Effect
   useEffect(() => {
     if (timeLeft > 0) {
       const t = setTimeout(() => setTimeLeft(l => l - 1), 1000);
       return () => clearTimeout(t);
     } else if (timeLeft === 0 && history.length > 0) {
-      // Auto-end interview
       saveTranscript();
       router.push('/dashboard');
     }
@@ -437,63 +393,62 @@ export default function InterviewPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] bg-slate-50 p-6 flex flex-col items-center">
+    <div className="relative min-h-[calc(100vh-80px)] bg-[#FFFBED] p-4 md:p-10 flex flex-col items-center selection:bg-[#FF3366] selection:text-white">
       
       {/* Timer Display */}
-      <div className="absolute top-6 right-6 z-10 flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2 text-white shadow-lg ring-1 ring-white/10">
-        <span className={`text-sm font-bold tracking-wider ${timeLeft < 60 ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
+      <div className="absolute top-4 right-4 md:top-10 md:right-10 z-10 flex items-center gap-4 bg-white border-4 border-black px-6 py-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <span className={`text-2xl font-black tracking-widest ${timeLeft < 60 ? 'text-[#FF3366] animate-pulse' : 'text-black'}`}>
           {formatTime(timeLeft)}
         </span>
-        <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">remaining</span>
+        <span className="text-sm font-black text-black bg-[#EAFF00] px-2 uppercase tracking-widest border-2 border-black">LEFT</span>
       </div>
 
       {/* Role Modal */}
       {showRoleModal && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl ring-1 ring-slate-900/5">
-            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Start Interview</h2>
-            <p className="mt-2 text-sm text-slate-500 font-medium">What role are you applying for?</p>
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-white border-8 border-black p-10 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[24px_24px_0px_0px_rgba(0,0,0,1)] transition-all">
+            <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter mb-4 bg-[#00E5FF] inline-block px-4 py-2 border-4 border-black">START INTERVIEW</h2>
+            <p className="mt-4 text-xl font-bold text-black uppercase tracking-wide">WHAT ROLE ARE YOU APPLYING FOR?</p>
             <input
               autoFocus
-              className="mt-6 w-full rounded-2xl border border-slate-200 p-4 text-sm font-medium outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-slate-50"
-              placeholder="e.g. Senior Frontend Developer"
+              className="mt-6 w-full border-4 border-black bg-[#FFFBED] p-4 text-xl font-bold uppercase text-black placeholder:text-black/30 outline-none focus:ring-4 focus:ring-[#FF3366] focus:bg-white transition-all shadow-inner"
+              placeholder="e.g. SENIOR FRONTEND DEVELOPER"
               value={manualRole}
-              onChange={e => setManualRole(e.target.value)}
+              onChange={e => setManualRole(e.target.value.toUpperCase())}
               onKeyDown={e => e.key === 'Enter' && handleRoleSubmit()}
             />
             <button
               onClick={handleRoleSubmit}
-              className="mt-6 w-full rounded-2xl bg-indigo-600 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md"
+              className="mt-8 w-full border-4 border-black bg-[#FF3366] py-4 text-2xl font-black uppercase text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
             >
-              Begin Interview Session
+              BEGIN INTERVIEW
             </button>
           </div>
         </div>
       )}
 
       {/* Main Interview Area */}
-      <div className="w-full max-w-5xl flex-1 flex flex-col gap-6 mt-4">
+      <div className="w-full max-w-6xl flex-1 flex flex-col gap-8 mt-12 md:mt-24">
         
         {/* Question card */}
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:shadow-md">
-          <div className="flex items-center gap-3">
-             <span className="relative flex h-2.5 w-2.5">
-               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isAiSpeaking ? 'bg-indigo-400' : 'bg-emerald-400'}`}></span>
-               <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isAiSpeaking ? 'bg-indigo-500' : 'bg-emerald-500'}`}></span>
-             </span>
-             <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-               {isAiSpeaking ? "AI is speaking" : "Your Turn (Speak now)"}
-             </p>
+        <div className="border-8 border-black bg-white p-8 md:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all relative">
+          <div className="absolute -top-6 left-8 bg-[#EAFF00] border-4 border-black px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+             <div className="flex items-center gap-4">
+               <span className={`h-4 w-4 border-2 border-black ${isAiSpeaking ? 'bg-[#FF3366] animate-pulse' : 'bg-[#00E5FF]'}`}></span>
+               <p className="text-sm font-black uppercase tracking-[0.2em] text-black">
+                 {isAiSpeaking ? "AI IS SPEAKING" : "YOUR TURN (SPEAK NOW)"}
+               </p>
+             </div>
           </div>
-          <p className="mt-4 text-xl font-medium text-slate-800 leading-relaxed">{currentQuestion}</p>
+          <p className="mt-6 text-2xl md:text-4xl font-black text-black uppercase leading-tight tracking-tight">{currentQuestion}</p>
         </div>
 
         {/* Video Area */}
-        <div className="relative w-full flex-1 min-h-[500px] rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 shadow-xl ring-1 ring-slate-900/10 flex flex-col">
-          <div className="relative flex h-full gap-4 flex-col md:flex-row">
+        <div className="relative w-full flex-1 min-h-[600px] border-8 border-black bg-[#00E5FF] p-6 md:p-10 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+          <div className="relative flex h-full gap-8 flex-col lg:flex-row">
             
             {/* Candidate Video */}
-            <div className="relative flex-1 overflow-hidden rounded-2xl bg-black/80">
+            <div className="relative flex-1 border-8 border-black bg-black overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)]">
               <Webcam
                 ref={webcamRef}
                 audio={true}
@@ -506,52 +461,50 @@ export default function InterviewPage() {
 
               {/* User Transcript Overlay */}
               {userTranscript && (
-                <div className="absolute inset-x-8 bottom-24 rounded-2xl bg-black/60 p-5 text-center text-white backdrop-blur-md shadow-2xl transition-all duration-300">
-                  <p className="text-lg font-medium leading-relaxed">"{userTranscript}"</p>
+                <div className="absolute inset-x-8 bottom-28 border-4 border-black bg-[#EAFF00] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+                  <p className="text-2xl font-black text-black uppercase leading-tight">"{userTranscript}"</p>
                   {silenceCountdown !== null && (
-                    <p className="text-sm font-semibold text-indigo-300 mt-2">Sending in {silenceCountdown}s...</p>
+                    <p className="text-lg font-bold text-black/70 mt-4 bg-white border-2 border-black inline-block px-3 py-1">SENDING IN {silenceCountdown}S...</p>
                   )}
-                  <p className="text-xs text-zinc-400 mt-2">Vol: {currentVolume.toFixed(0)}</p>
+                  <p className="text-xs font-bold text-black/50 mt-4 uppercase">VOL: {currentVolume.toFixed(0)}</p>
                 </div>
               )}
 
               {/* Recording indicator */}
-              <div className="absolute left-6 top-6 flex items-center gap-2 rounded-full bg-black/50 px-4 py-1.5 text-xs font-semibold text-rose-200 backdrop-blur-md">
-                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-                Recording
+              <div className="absolute left-6 top-6 flex items-center gap-3 border-4 border-black bg-white px-4 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <span className="h-4 w-4 bg-[#FF3366] border-2 border-black animate-pulse" />
+                <span className="text-sm font-black text-black uppercase tracking-widest">RECORDING</span>
               </div>
             </div>
 
             {/* AI interviewer tile */}
-            <div className={`flex w-full md:w-72 flex-col justify-between rounded-2xl p-6 text-slate-100 shadow-inner transition-colors duration-500 ${isAiSpeaking ? 'bg-indigo-900/90 ring-2 ring-indigo-500 shadow-indigo-500/20' : 'bg-slate-900/80'}`}>
-              <div className="flex flex-col items-center gap-4 pt-8 text-center">
-                <div className="relative h-24 w-24">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg" />
-                  {isAiSpeaking && <span className="absolute inset-0 rounded-full bg-indigo-400 animate-ping opacity-75" />}
-                  <div className="absolute inset-0 flex items-center justify-center text-white/50">
-                    <Headphones size={36} />
-                  </div>
+            <div className={`flex w-full lg:w-96 flex-col justify-between border-8 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-colors duration-500 ${isAiSpeaking ? 'bg-[#FF3366]' : 'bg-white'}`}>
+              <div className="flex flex-col items-center gap-6 pt-10 text-center">
+                <div className="relative h-40 w-40 border-8 border-black bg-black flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)]">
+                  {isAiSpeaking && <span className="absolute inset-0 bg-white opacity-20 animate-ping" />}
+                  <Headphones size={80} className="text-[#00E5FF] stroke-[2]" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold tracking-tight">AI Interviewer</p>
-                  <p className="text-sm text-indigo-300 font-medium mt-1">{isAiSpeaking ? "Speaking..." : "Listening..."}</p>
+                  <p className={`text-4xl font-black tracking-tighter uppercase ${isAiSpeaking ? 'text-white' : 'text-black'}`}>AI INTERVIEWER</p>
+                  <p className={`text-xl font-bold mt-2 uppercase border-4 border-black inline-block px-4 py-1 ${isAiSpeaking ? 'bg-black text-white' : 'bg-[#EAFF00] text-black'}`}>{isAiSpeaking ? "SPEAKING..." : "LISTENING..."}</p>
                 </div>
               </div>
-              <div className="mt-8 rounded-xl bg-black/20 p-5 text-sm text-slate-300 backdrop-blur-sm">
+              
+              <div className="mt-12 border-4 border-black bg-black p-6 text-sm">
                 {isAiSpeaking ? (
-                  <div className="flex items-center gap-3 text-indigo-300">
-                    <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
-                    <p className="font-medium">Explaining question</p>
+                  <div className="flex items-center gap-4 text-white">
+                    <span className="h-4 w-4 bg-[#00E5FF] border-2 border-white animate-pulse" />
+                    <p className="font-black uppercase tracking-widest text-lg">EXPLAINING QUESTION</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-emerald-400">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <p className="font-medium">Listening to you...</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 text-[#EAFF00]">
+                      <span className="h-4 w-4 bg-[#EAFF00] border-2 border-[#EAFF00] animate-pulse" />
+                      <p className="font-black uppercase tracking-widest text-lg">LISTENING TO YOU...</p>
                     </div>
-                    <div className="flex justify-between border-t border-white/10 pt-3 text-xs text-slate-400 font-medium">
-                      <span>Threshold: 15</span>
-                      <span>Level: {currentVolume.toFixed(0)}</span>
+                    <div className="flex justify-between border-t-4 border-white/20 pt-4 text-sm font-black text-white uppercase">
+                      <span>THRESHOLD: 15</span>
+                      <span>LEVEL: {currentVolume.toFixed(0)}</span>
                     </div>
                   </div>
                 )}
@@ -560,52 +513,48 @@ export default function InterviewPage() {
           </div>
 
           {/* Bottom controls */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center">
-            <div className="pointer-events-auto flex items-center gap-4 rounded-full bg-slate-900/90 px-8 py-3.5 text-slate-100 shadow-2xl backdrop-blur-md ring-1 ring-white/10">
+          <div className="pointer-events-none absolute inset-x-0 bottom-10 flex justify-center z-20">
+            <div className="pointer-events-auto flex items-center gap-6 border-8 border-black bg-white px-10 py-6 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+              
               <button
                 onClick={toggleMic}
-                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${micOn ? 'bg-slate-700 hover:bg-slate-600' : 'bg-rose-500 hover:bg-rose-600'}`}
+                className={`flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${micOn ? 'bg-[#00E5FF]' : 'bg-[#FF3366]'}`}
               >
-                {micOn ? <Mic size={20} /> : <MicOff size={20} />}
+                {micOn ? <Mic size={28} className="stroke-[3] text-black" /> : <MicOff size={28} className="stroke-[3] text-white" />}
               </button>
+              
               <button
                 onClick={() => setVideoOn(!videoOn)}
-                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${videoOn ? 'bg-slate-700 hover:bg-slate-600' : 'bg-rose-500 hover:bg-rose-600'}`}
+                className={`flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${videoOn ? 'bg-[#00E5FF]' : 'bg-[#FF3366]'}`}
               >
-                {videoOn ? <Video size={20} /> : <VideoOff size={20} />}
+                {videoOn ? <Video size={28} className="stroke-[3] text-black" /> : <VideoOff size={28} className="stroke-[3] text-white" />}
               </button>
+
+              <div className="h-12 w-2 bg-black mx-2" />
 
               {/* DONE SPEAKING BUTTON */}
               <button
                 type="button"
                 onClick={() => {
-                  if (!userTranscript.trim()) return; // Don't submit empty
+                  if (!userTranscript.trim()) return;
                   handleUserAnswer(userTranscript);
                 }}
                 disabled={isAiSpeaking || !userTranscript.trim()}
-                className={`flex h-12 items-center gap-2 rounded-full px-8 text-sm font-bold shadow-lg transition-all duration-300
+                className={`flex h-16 items-center gap-2 px-10 text-xl font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all
                       ${(isAiSpeaking || !userTranscript.trim())
-                    ? 'bg-slate-700 text-slate-400 opacity-50 cursor-not-allowed'
-                    : 'bg-emerald-500 text-white hover:bg-emerald-600 hover:scale-105'}`}
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#EAFF00] text-black hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'}`}
               >
-                Done Speaking
+                DONE SPEAKING
               </button>
 
-              {/* Helper Text */}
-              {(!userTranscript.trim() && !isAiSpeaking && isListening) && (
-                <div className="absolute -top-14 left-1/2 -translate-x-1/2 rounded-lg bg-black/80 px-4 py-2 text-xs font-semibold tracking-wide text-white backdrop-blur-md animate-bounce">
-                  Say something...
-                </div>
-              )}
-
-              <div className="h-8 w-px bg-white/10 mx-2" />
+              <div className="h-12 w-2 bg-black mx-2" />
 
               <button
                 onClick={async () => {
                   if (isEnding) return;
                   setIsEnding(true);
                   try {
-                    // Manual termination: save before exit
                     await saveTranscript();
                   } catch (e) {
                     console.error("Manual save failed:", e);
@@ -613,12 +562,20 @@ export default function InterviewPage() {
                   router.push('/dashboard');
                 }}
                 disabled={isEnding}
-                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${isEnding ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-500 hover:bg-rose-600 hover:rotate-12'}`}
+                className={`flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${isEnding ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'}`}
                 title="End Interview"
               >
-                {isEnding ? <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <PhoneOff size={20} />}
+                {isEnding ? <div className="h-6 w-6 animate-spin border-4 border-white border-t-transparent" /> : <PhoneOff size={28} className="stroke-[3] text-white" />}
               </button>
+
             </div>
+            
+            {/* Helper Text */}
+            {(!userTranscript.trim() && !isAiSpeaking && isListening) && (
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 border-4 border-black bg-[#FF3366] px-6 py-2 text-xl font-black uppercase tracking-widest text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-bounce">
+                SAY SOMETHING...
+              </div>
+            )}
           </div>
         </div>
 

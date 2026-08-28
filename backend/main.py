@@ -170,6 +170,7 @@ async def end_interview(request: EndInterviewRequest):
     {transcript_text}
     
     Analyze the above interview for the role of {request.job_role}.
+    If the transcript is extremely short or empty, provide a constructive summary indicating that the interview was aborted or too brief, and return an overall_score of 0.
     Output strictly valid JSON with this structure:
     {{
       "overall_score": <integer_0_to_100>,
@@ -198,9 +199,19 @@ async def end_interview(request: EndInterviewRequest):
 
         print(f"DEBUG: Raw Gemini response: {response_text}")
 
+        # Clean markdown wrappers if they exist
+        clean_text = response_text.strip()
+        if clean_text.startswith("```json"):
+            clean_text = clean_text[7:]
+        elif clean_text.startswith("```"):
+            clean_text = clean_text[3:]
+        if clean_text.endswith("```"):
+            clean_text = clean_text[:-3]
+        clean_text = clean_text.strip()
+
         # Parse JSON response
         import json
-        result = json.loads(response_text)
+        result = json.loads(clean_text)
         
         return {
             "score": result.get("overall_score", 0),
@@ -339,10 +350,11 @@ class InternshipScraper:
         if df.empty: return df
         
         # Clean data
-        df['company'] = df['company'].fillna('Unknown Company').str.strip()
-        df['title'] = df['title'].fillna('Unknown Title').str.strip()
-        df['location'] = df['location'].fillna('Not specified').str.strip()
-        df['apply_url'] = df['job_url'].fillna('')
+        df['company'] = df.get('company', pd.Series(dtype=str)).fillna('Unknown Company').astype(str).str.strip()
+        df['title'] = df.get('title', pd.Series(dtype=str)).fillna('Unknown Title').astype(str).str.strip()
+        df['location'] = df.get('location', pd.Series(dtype=str)).fillna('Not specified').astype(str).str.strip()
+        df['description'] = df.get('description', pd.Series(dtype=str)).fillna('No description provided').astype(str).str.strip()
+        df['apply_url'] = df.get('job_url', pd.Series(dtype=str)).fillna('')
         
         # Calculate relevance score based on user skills
         df['relevance_score'] = df.apply(

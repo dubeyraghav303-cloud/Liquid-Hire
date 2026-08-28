@@ -12,60 +12,47 @@ const highlightCards = [
 ];
 
 const perks = [
-  { icon: Bot, label: "Live AI Interviews", detail: "Experience high-pressure technical & behavioral rounds." },
-  { icon: Flame, label: "Brutal Roast", detail: "Get unfiltered, harsh feedback to actually improve." },
-  { icon: FileText, label: "Resume Tailor", detail: "Instantly align your resume with any job description." },
+  { icon: Bot, label: "Live AI", detail: "Tough human recruiter." },
+  { icon: Flame, label: "Brutal Roast", detail: "Unfiltered, harsh feedback." },
+  { icon: FileText, label: "Tailor", detail: "Align with any JD." },
 ];
 
 const faqs = [
-  { q: "How realistic is the AI Interview?", a: "Extremely. Our AI dynamically adjusts its questioning based on your resume and your real-time verbal answers, mimicking a tough human recruiter." },
-  { q: "Is the Resume Roast really that brutal?", a: "Yes. We don't sugarcoat. The AI will point out weak bullet points, buzzword fluff, and exactly why your resume might be getting rejected." },
-  { q: "Can I tailor my resume for multiple jobs?", a: "Absolutely. You can paste any job description and Authin will instantly restructure your resume to highlight the most relevant skills and experiences." },
-  { q: "Is Authin free to use?", a: "We offer a generous Free tier that includes basic mock interviews and resume roasts. For advanced analytics and unlimited tailoring, you can upgrade to Pro." },
+  { q: "HOW REALISTIC IS THE AI INTERVIEW?", a: "Extremely. Our AI dynamically adjusts its questioning based on your resume and your real-time verbal answers, mimicking a tough human recruiter." },
+  { q: "IS THE RESUME ROAST REALLY THAT BRUTAL?", a: "Yes. We don't sugarcoat. The AI will point out weak bullet points, buzzword fluff, and exactly why your resume might be getting rejected." },
+  { q: "CAN I TAILOR MY RESUME FOR MULTIPLE JOBS?", a: "Absolutely. You can paste any job description and Authin will instantly restructure your resume to highlight the most relevant skills and experiences." },
+  { q: "IS AUTHIN FREE TO USE?", a: "We offer a generous Free tier that includes basic mock interviews and resume roasts. For advanced analytics and unlimited tailoring, you can upgrade to Pro." },
 ];
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden text-white bg-[#05030d] scroll-smooth">
-      {/* Dynamic Backgrounds */}
-      <motion.div style={{ y, opacity }} className="pointer-events-none absolute inset-0 opacity-60">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(116,74,255,0.35),transparent_35%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(66,178,255,0.25),transparent_32%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,rgba(123,52,255,0.22),transparent_38%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,#0b0719_0%,#05030d_48%,#08041a_100%)]" />
-      </motion.div>
+    <div ref={containerRef} className="relative min-h-screen overflow-hidden font-sans bg-[#FFFBED] text-black scroll-smooth selection:bg-[#FF3366] selection:text-white">
+      {/* Brutalist Grid Background */}
+      <div className="pointer-events-none absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '40px 40px' }} />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 pb-24 pt-10 md:pt-14">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-12 px-6 pb-24 pt-10 md:pt-14">
         <LandingNavbar />
 
         {/* HERO SECTION */}
-        <section className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center mt-8 lg:mt-12 pt-8">
+        <section className="grid gap-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-center mt-8 lg:mt-12 pt-8">
           {/* Left Column: Text & CTA */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="space-y-10"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="space-y-10 relative z-10"
           >
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/70 backdrop-blur shadow-[0_0_20px_rgba(116,74,255,0.15)]"
+              className="inline-flex items-center gap-2 border-4 border-black bg-[#EAFF00] px-4 py-2 text-sm font-bold uppercase tracking-widest text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
-              <Sparkles className="h-4 w-4 text-purple-400" />
-              The Ultimate Career Cheat Code
+              <Sparkles className="h-5 w-5" />
+              The Career Cheat Code
             </motion.div>
             
             <div className="space-y-6">
@@ -73,17 +60,17 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-5xl font-semibold leading-[1.1] text-white md:text-6xl lg:text-7xl"
+                className="text-6xl font-black uppercase leading-[0.9] text-black md:text-7xl lg:text-[6rem] tracking-tighter"
               >
-                Ace Your Next <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-300 to-white">Interview</span>
+                DOMINATE YOUR NEXT <span className="text-[#FF3366] mix-blend-multiply underline decoration-8 decoration-[#00E5FF]">INTERVIEW</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="max-w-xl text-lg text-white/70 md:text-xl md:leading-relaxed"
+                className="max-w-xl text-xl font-bold text-black/80 md:text-2xl border-l-8 border-[#FF3366] pl-6"
               >
-                Stop failing interviews. Practice with our brutal AI recruiter, get your resume roasted, and perfectly tailor your application for any job in seconds.
+                Stop failing. Practice with our brutal AI recruiter, get your resume roasted, and perfectly tailor your application for any job. FAST.
               </motion.p>
             </div>
             
@@ -91,24 +78,24 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="flex flex-wrap items-center gap-4"
+              className="flex flex-wrap items-center gap-6"
             >
               <Link href="/login">
                 <motion.button 
-                  whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(255,255,255,0.25)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-purple-700 transition-colors hover:bg-slate-100"
+                  whileHover={{ scale: 1.02, x: 2, y: -2 }}
+                  whileTap={{ scale: 0.98, x: 0, y: 0, boxShadow: "0px 0px 0px 0px rgba(0,0,0,1)" }}
+                  className="flex items-center gap-3 border-4 border-black bg-[#00E5FF] px-8 py-5 text-xl font-black uppercase text-black transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAFF00]"
                 >
-                  Start Your Free Mock Interview <ArrowRight className="h-4 w-4" />
+                  START FREE MOCK <ArrowRight className="h-6 w-6 stroke-[3]" />
                 </motion.button>
               </Link>
               <Link href="#about">
                 <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white/80 transition-colors hover:border-white/40 hover:text-white"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="border-4 border-black bg-white px-8 py-5 text-xl font-black uppercase text-black transition-all hover:bg-black hover:text-white"
                 >
-                  Learn More
+                  LEARN MORE
                 </motion.button>
               </Link>
             </motion.div>
@@ -123,7 +110,7 @@ export default function Home() {
                   transition: { staggerChildren: 0.1, delayChildren: 0.6 }
                 }
               }}
-              className="grid gap-4 sm:grid-cols-3 pt-6 border-t border-white/10"
+              className="grid gap-4 sm:grid-cols-3 pt-6"
             >
               {perks.map((perk) => (
                 <motion.div 
@@ -132,12 +119,12 @@ export default function Home() {
                     hidden: { opacity: 0, y: 20 },
                     visible: { opacity: 1, y: 0 }
                   }}
-                  whileHover={{ y: -5, backgroundColor: "rgba(255,255,255,0.08)" }}
-                  className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 transition-colors"
+                  whileHover={{ y: -5, rotate: -2 }}
+                  className="border-4 border-black bg-white p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-transform"
                 >
-                  <perk.icon className="h-6 w-6 text-blue-400 mb-3" />
-                  <p className="text-[10px] uppercase tracking-[0.1em] text-white/60 mb-1">{perk.label}</p>
-                  <p className="text-sm font-medium text-white/90 leading-tight">{perk.detail}</p>
+                  <perk.icon className="h-8 w-8 text-[#FF3366] mb-3" />
+                  <p className="text-sm font-black uppercase tracking-wider text-black mb-1">{perk.label}</p>
+                  <p className="text-xs font-bold text-black/70 leading-tight">{perk.detail}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -145,31 +132,30 @@ export default function Home() {
 
           {/* Right Column: Visual UI Representation */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, rotateY: 15 }}
-            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="relative lg:ml-auto w-full max-w-lg"
-            style={{ perspective: "1000px" }}
+            initial={{ opacity: 0, scale: 0.9, rotate: 5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            className="relative lg:ml-auto w-full max-w-lg z-0"
           >
             <motion.div 
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#120d24] via-[#0c0a1b] to-[#080615] p-8 shadow-[0_30px_100px_rgba(0,0,0,0.6)] backdrop-blur"
+              className="relative overflow-hidden border-8 border-black bg-[#7B61FF] p-8 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] rotate-2 hover:rotate-0 transition-transform duration-300"
             >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(123,92,255,0.35),transparent_35%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(54,146,255,0.28),transparent_40%)]" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#EAFF00] rounded-full blur-3xl opacity-50 translate-x-10 -translate-y-10" />
+              
               <div className="relative space-y-8">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between border-b-4 border-black pb-4">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/50">Authin</p>
-                    <p className="mt-1 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Live Assessment</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-black">AUTHIN</p>
+                    <p className="mt-1 text-3xl font-black uppercase tracking-tight text-white stroke-black">LIVE ASSESSMENT</p>
                   </div>
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-2 rounded-full bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-400 backdrop-blur ring-1 ring-rose-500/20"
+                    className="flex items-center gap-2 border-2 border-black bg-[#FF3366] px-3 py-1.5 text-xs font-bold text-white uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
-                    Recording
+                    <span className="h-2 w-2 bg-white animate-ping" />
+                    REC
                   </motion.button>
                 </div>
 
@@ -177,40 +163,36 @@ export default function Home() {
                   {highlightCards.map((card, i) => (
                     <motion.div 
                       key={card.subtitle}
-                      whileHover={{ scale: 1.03 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md"
+                      whileHover={{ scale: 1.05, rotate: i % 2 === 0 ? -3 : 3 }}
+                      className="border-4 border-black bg-white p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />
-                      <div className="relative">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-blue-300">{card.title}</p>
-                        <p className="mt-1 text-sm text-white/80">{card.subtitle}</p>
-                        <p className="mt-4 text-3xl font-semibold text-white">{card.value}</p>
-                      </div>
+                      <p className="text-xs font-black uppercase text-[#7B61FF]">{card.title}</p>
+                      <p className="mt-1 text-xs font-bold text-black/60">{card.subtitle}</p>
+                      <p className="mt-4 text-4xl font-black text-black">{card.value}</p>
                     </motion.div>
                   ))}
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+                <div className="border-4 border-black bg-[#00E5FF] p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm font-medium text-white/90">Interview Performance</p>
-                      <p className="text-xs text-white/50">Confidence & Clarity metrics</p>
+                      <p className="text-base font-black uppercase text-black">Performance</p>
+                      <p className="text-xs font-bold text-black/70">Confidence & Clarity</p>
                     </div>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500/20 text-purple-400 ring-1 ring-purple-500/30">
-                      <Zap className="h-4 w-4" />
+                    <div className="flex h-10 w-10 items-center justify-center border-2 border-black bg-[#EAFF00] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <Zap className="h-6 w-6 stroke-[3]" />
                     </div>
                   </div>
-                  <div className="h-24 overflow-hidden rounded-xl bg-gradient-to-b from-white/5 to-transparent p-3 relative flex items-end">
+                  <div className="h-24 border-t-4 border-black bg-white p-3 relative flex items-end">
                      {/* Decorative graph bars */}
-                     <div className="absolute bottom-0 left-3 flex items-end gap-2 h-16 opacity-60">
-                        {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85].map((height, i) => (
+                     <div className="absolute bottom-0 left-3 flex items-end gap-2 h-16 w-full">
+                        {[40, 70, 45, 90, 65, 80, 50, 100, 75].map((height, i) => (
                           <motion.div 
                             key={i}
                             initial={{ height: 0 }}
                             animate={{ height: `${height}%` }}
                             transition={{ duration: 1, delay: 0.5 + i * 0.1, ease: "easeOut" }}
-                            className="w-4 lg:w-5 rounded-t-sm bg-gradient-to-t from-purple-500/50 to-blue-400/80"
+                            className="w-4 lg:w-5 border-2 border-black bg-[#FF3366]"
                           />
                         ))}
                      </div>
@@ -223,31 +205,30 @@ export default function Home() {
             <motion.div 
               animate={{ y: [-5, 5, -5] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -right-4 -top-6 hidden w-44 rounded-2xl border border-white/10 bg-[#1a1438]/80 p-5 text-sm backdrop-blur-xl shadow-2xl md:block z-10"
+              className="absolute -right-8 -top-8 hidden w-48 border-4 border-black bg-[#EAFF00] p-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:block z-10 rotate-3"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-                  <Target className="h-4 w-4" />
+                <div className="flex h-10 w-10 items-center justify-center border-2 border-black bg-white text-black">
+                  <Target className="h-6 w-6" />
                 </div>
-                <p className="text-xs font-medium text-white/80">Tailor Match</p>
+                <p className="text-sm font-black uppercase text-black">Tailor Match</p>
               </div>
-              <p className="text-3xl font-bold text-white tracking-tight">98.5<span className="text-lg text-white/50">%</span></p>
-              <p className="mt-1 text-[10px] uppercase tracking-wider text-emerald-400">Keyword Alignment</p>
+              <p className="text-4xl font-black text-black">98.5%</p>
             </motion.div>
 
             <motion.div 
               animate={{ y: [5, -5, 5], rotate: [-4, -6, -4] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute -bottom-8 -left-8 hidden w-48 rounded-3xl border border-white/10 bg-[#0d1b2a]/80 p-5 text-sm backdrop-blur-xl shadow-2xl lg:block z-10"
+              className="absolute -bottom-10 -left-10 hidden w-56 border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] lg:block z-20 -rotate-3"
             >
-              <p className="text-xs text-white/60 uppercase tracking-widest">Interview Score</p>
-              <p className="mt-2 text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">A+</p>
-              <div className="mt-3 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+              <p className="text-sm font-black uppercase text-black/60">Interview Score</p>
+              <p className="mt-2 text-6xl font-black text-[#FF3366]">A+</p>
+              <div className="mt-4 h-4 w-full border-2 border-black bg-gray-200 overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: "95%" }}
                   transition={{ duration: 1.5, delay: 1 }}
-                  className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500" 
+                  className="h-full bg-[#00E5FF] border-r-2 border-black" 
                 />
               </div>
             </motion.div>
@@ -255,16 +236,16 @@ export default function Home() {
         </section>
 
         {/* ABOUT SECTION */}
-        <section id="about" className="mt-32 pt-20 border-t border-white/5 scroll-mt-20">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <section id="about" className="mt-40 pt-20 border-t-8 border-black scroll-mt-20">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl font-semibold md:text-5xl text-white">Why Authin Exists</h2>
-              <p className="mt-6 text-lg text-white/60 leading-relaxed">
+              <h2 className="text-5xl font-black uppercase md:text-7xl text-black leading-none">WHY AUTHIN <br/><span className="text-[#00E5FF] bg-black px-2 mt-2 inline-block">EXISTS</span></h2>
+              <p className="mt-8 text-xl font-bold text-black/80 leading-relaxed border-l-8 border-[#EAFF00] pl-6 bg-white p-6 border-y-4 border-r-4 border-t-black border-r-black border-b-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                 The job market is broken. Candidates send hundreds of resumes into the void and fail interviews without ever knowing why. 
                 <br/><br/>
                 We built Authin to give you the unfair advantage. By simulating the exact high-pressure environments of top tech companies, providing brutal, actionable feedback on your resume, and instantly tailoring your applications, we turn candidates into absolute top-tier hires.
@@ -275,33 +256,33 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative h-80 rounded-3xl border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center backdrop-blur-sm"
+              className="relative h-[400px] border-8 border-black bg-[#FF3366] overflow-hidden flex items-center justify-center shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] -rotate-2"
             >
-               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-blue-500/10 opacity-50" />
-               <Bot className="h-32 w-32 text-white/20" />
+               <Bot className="h-48 w-48 text-black" />
+               <div className="absolute bottom-4 right-4 bg-white border-4 border-black p-2 font-black uppercase text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-6">AI MODE: RUTHLESS</div>
             </motion.div>
           </div>
         </section>
 
         {/* PLATFORM SECTION */}
-        <section id="platform" className="mt-32 pt-20 border-t border-white/5 scroll-mt-20">
+        <section id="platform" className="mt-40 pt-20 border-t-8 border-black scroll-mt-20">
            <motion.div 
              initial={{ opacity: 0, y: 40 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true, margin: "-100px" }}
              transition={{ duration: 0.8 }}
-             className="text-center max-w-3xl mx-auto mb-16 px-4"
+             className="text-center max-w-4xl mx-auto mb-20 px-4"
            >
-             <h2 className="text-3xl font-semibold md:text-5xl text-white">The Ultimate Candidate Arsenal</h2>
-             <p className="mt-6 text-lg text-white/60">Everything you need to bypass the ATS and crush the final round.</p>
+             <h2 className="text-5xl font-black uppercase md:text-7xl text-black">THE ULTIMATE ARSENAL</h2>
+             <p className="mt-6 text-2xl font-bold text-black/70 uppercase border-4 border-black bg-[#EAFF00] inline-block px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Bypass the ATS & crush the final round.</p>
            </motion.div>
 
-           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
              {[
-               { icon: Bot, title: "AI Interviews", desc: "Real-time voice interviews that dynamically adapt to your resume and answers.", delay: 0.1 },
-               { icon: Flame, title: "Brutal Roast", desc: "Stop wondering why you were rejected. Get raw, unforgiving feedback.", delay: 0.2 },
-               { icon: FileText, title: "Resume Tailor", desc: "Paste a job description and instantly rewrite your resume to match the exact requirements.", delay: 0.3 },
-               { icon: Search, title: "Job Finder", desc: "Discover active roles perfectly suited to your newly tailored profile.", delay: 0.4 }
+               { icon: Bot, title: "AI Interviews", desc: "Real-time voice interviews that dynamically adapt to your resume.", bg: "bg-[#00E5FF]", delay: 0.1 },
+               { icon: Flame, title: "Brutal Roast", desc: "Stop wondering why you were rejected. Get raw, unforgiving feedback.", bg: "bg-[#FF3366]", delay: 0.2 },
+               { icon: FileText, title: "Resume Tailor", desc: "Instantly rewrite your resume to match the exact requirements.", bg: "bg-[#EAFF00]", delay: 0.3 },
+               { icon: Search, title: "Job Finder", desc: "Discover active roles perfectly suited to your newly tailored profile.", bg: "bg-[#7B61FF]", delay: 0.4 }
              ].map((feature, i) => (
                <motion.div
                  key={feature.title}
@@ -309,52 +290,53 @@ export default function Home() {
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true, margin: "-50px" }}
                  transition={{ duration: 0.6, delay: feature.delay }}
-                 whileHover={{ y: -8, scale: 1.02 }}
-                 className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur transition-all hover:bg-white/10 cursor-pointer flex flex-col"
+                 whileHover={{ y: -8, scale: 1.02, rotate: i % 2 === 0 ? 2 : -2 }}
+                 className={`group relative border-4 border-black ${feature.bg} p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer flex flex-col`}
                >
-                 <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                 <feature.icon className="h-8 w-8 text-indigo-400 mb-6" />
-                 <h3 className="relative text-xl font-semibold text-white">{feature.title}</h3>
-                 <p className="relative mt-4 text-sm text-white/60 leading-relaxed flex-1">{feature.desc}</p>
+                 <div className="flex h-16 w-16 items-center justify-center border-4 border-black bg-white mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-2 transition-transform">
+                    <feature.icon className="h-8 w-8 text-black" />
+                 </div>
+                 <h3 className={`text-2xl font-black uppercase text-black ${feature.bg === 'bg-[#7B61FF]' || feature.bg === 'bg-[#FF3366]' ? 'text-white' : ''} stroke-black`}>{feature.title}</h3>
+                 <p className={`mt-4 text-base font-bold flex-1 ${feature.bg === 'bg-[#7B61FF]' || feature.bg === 'bg-[#FF3366]' ? 'text-white/90' : 'text-black/80'}`}>{feature.desc}</p>
                </motion.div>
              ))}
            </div>
         </section>
 
         {/* PRICING SECTION */}
-        <section id="pricing" className="mt-32 pt-20 border-t border-white/5 scroll-mt-20">
+        <section id="pricing" className="mt-40 pt-20 border-t-8 border-black scroll-mt-20">
            <motion.div 
              initial={{ opacity: 0, y: 40 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true, margin: "-100px" }}
              transition={{ duration: 0.8 }}
-             className="text-center max-w-3xl mx-auto mb-16 px-4"
+             className="text-center max-w-4xl mx-auto mb-20 px-4"
            >
-             <h2 className="text-3xl font-semibold md:text-5xl text-white">Simple, Transparent Pricing</h2>
-             <p className="mt-6 text-lg text-white/60">Invest in your career. Upgrade when you're ready.</p>
+             <h2 className="text-5xl font-black uppercase md:text-7xl text-black">NO BS PRICING</h2>
+             <p className="mt-6 text-2xl font-bold text-black/70 uppercase">Invest in your career. Upgrade when ready.</p>
            </motion.div>
 
-           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+           <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
               {/* Free Tier */}
               <motion.div 
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.02 }}
-                className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur flex flex-col"
+                whileHover={{ scale: 1.02, rotate: -1 }}
+                className="border-8 border-black bg-white p-10 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col"
               >
-                <h3 className="text-2xl font-semibold text-white">Starter</h3>
-                <p className="mt-2 text-white/60">Perfect for dipping your toes in.</p>
-                <div className="mt-6 text-5xl font-bold text-white">$0<span className="text-xl font-normal text-white/50">/mo</span></div>
-                <ul className="mt-8 space-y-4 flex-1">
+                <h3 className="text-4xl font-black uppercase text-black">Starter</h3>
+                <p className="mt-2 font-bold text-black/60 uppercase">Dipping your toes in.</p>
+                <div className="mt-8 text-7xl font-black text-black">$0<span className="text-2xl font-bold text-black/50">/mo</span></div>
+                <ul className="mt-10 space-y-4 flex-1">
                   {["1 AI Mock Interview / week", "Basic Resume Roast", "3 Resume Tailors / month", "Access to Job Board"].map(feature => (
-                    <li key={feature} className="flex items-center gap-3 text-white/80">
-                      <Check className="h-5 w-5 text-emerald-400" /> {feature}
+                    <li key={feature} className="flex items-center gap-4 text-lg font-bold text-black">
+                      <Check className="h-6 w-6 text-[#FF3366] stroke-[4]" /> {feature}
                     </li>
                   ))}
                 </ul>
                 <Link href="/login">
-                  <button className="mt-8 w-full rounded-2xl border border-white/20 bg-transparent py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                  <button className="mt-10 w-full border-4 border-black bg-white py-5 text-xl font-black uppercase text-black transition-all hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1">
                     Get Started Free
                   </button>
                 </Link>
@@ -365,22 +347,22 @@ export default function Home() {
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.02 }}
-                className="relative rounded-3xl border border-indigo-500/50 bg-indigo-900/20 p-8 backdrop-blur flex flex-col shadow-[0_0_40px_rgba(99,102,241,0.15)]"
+                whileHover={{ scale: 1.02, rotate: 1 }}
+                className="relative border-8 border-black bg-[#EAFF00] p-10 flex flex-col shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]"
               >
-                <div className="absolute top-0 right-8 -translate-y-1/2 rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Most Popular</div>
-                <h3 className="text-2xl font-semibold text-white">Pro</h3>
-                <p className="mt-2 text-indigo-200/70">For the serious job seeker.</p>
-                <div className="mt-6 text-5xl font-bold text-white">$29<span className="text-xl font-normal text-white/50">/mo</span></div>
-                <ul className="mt-8 space-y-4 flex-1">
+                <div className="absolute -top-6 -right-6 border-4 border-black bg-[#FF3366] px-6 py-2 text-lg font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-6">MOST POPULAR</div>
+                <h3 className="text-4xl font-black uppercase text-black">Pro</h3>
+                <p className="mt-2 font-bold text-black/70 uppercase">For the serious job seeker.</p>
+                <div className="mt-8 text-7xl font-black text-black">$29<span className="text-2xl font-bold text-black/50">/mo</span></div>
+                <ul className="mt-10 space-y-4 flex-1">
                   {["Unlimited AI Mock Interviews", "Brutal, In-depth Roasts", "Unlimited Resume Tailoring", "Priority Job Matches", "Detailed Analytics & Insights"].map(feature => (
-                    <li key={feature} className="flex items-center gap-3 text-white/80">
-                      <Check className="h-5 w-5 text-indigo-400" /> {feature}
+                    <li key={feature} className="flex items-center gap-4 text-lg font-bold text-black">
+                      <Check className="h-6 w-6 text-black stroke-[4]" /> {feature}
                     </li>
                   ))}
                 </ul>
                 <Link href="/login">
-                  <button className="mt-8 w-full rounded-2xl bg-indigo-600 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 shadow-lg">
+                  <button className="mt-10 w-full border-4 border-black bg-black py-5 text-xl font-black uppercase text-white transition-all hover:bg-[#00E5FF] hover:text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1">
                     Upgrade to Pro
                   </button>
                 </Link>
@@ -389,18 +371,18 @@ export default function Home() {
         </section>
 
         {/* FAQ SECTION */}
-        <section id="faq" className="mt-32 pt-20 border-t border-white/5 scroll-mt-20">
+        <section id="faq" className="mt-40 pt-20 border-t-8 border-black scroll-mt-20">
            <motion.div 
              initial={{ opacity: 0, y: 40 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true, margin: "-100px" }}
              transition={{ duration: 0.8 }}
-             className="text-center max-w-3xl mx-auto mb-16 px-4"
+             className="text-center max-w-4xl mx-auto mb-16 px-4"
            >
-             <h2 className="text-3xl font-semibold md:text-5xl text-white">Frequently Asked Questions</h2>
+             <h2 className="text-5xl font-black uppercase md:text-7xl text-black">FAQ</h2>
            </motion.div>
 
-           <div className="max-w-3xl mx-auto space-y-4">
+           <div className="max-w-4xl mx-auto space-y-6">
              {faqs.map((faq, i) => (
                <motion.div 
                  key={i}
@@ -408,21 +390,21 @@ export default function Home() {
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true }}
                  transition={{ delay: i * 0.1 }}
-                 className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden backdrop-blur"
+                 className="border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
                >
                  <button 
                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                   className="flex w-full items-center justify-between p-6 text-left"
+                   className={`flex w-full items-center justify-between p-6 text-left transition-colors ${openFaq === i ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
                  >
-                   <span className="text-lg font-medium text-white">{faq.q}</span>
-                   <ChevronDown className={`h-5 w-5 text-white/50 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`} />
+                   <span className="text-xl font-black uppercase">{faq.q}</span>
+                   <ChevronDown className={`h-6 w-6 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`} />
                  </button>
                  <motion.div 
                    initial={false}
                    animate={{ height: openFaq === i ? "auto" : 0, opacity: openFaq === i ? 1 : 0 }}
-                   className="overflow-hidden"
+                   className="overflow-hidden bg-[#FFFBED]"
                  >
-                   <p className="px-6 pb-6 text-white/60 leading-relaxed">{faq.a}</p>
+                   <p className="p-8 text-lg font-bold text-black/80 leading-relaxed border-t-4 border-black">{faq.a}</p>
                  </motion.div>
                </motion.div>
              ))}

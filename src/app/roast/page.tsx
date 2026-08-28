@@ -62,45 +62,47 @@ export default function RoastPage() {
     };
 
     const burnColor = (score: number) => {
-        if (score < 50) return 'text-green-500';
-        if (score < 80) return 'text-orange-500';
-        return 'text-red-600';
+        if (score < 50) return 'text-[#00E5FF]';
+        if (score < 80) return 'text-[#EAFF00]';
+        return 'text-[#FF3366]';
     };
 
     return (
-        <div className="min-h-screen bg-black text-green-500 font-mono p-4 md:p-10 relative overflow-y-auto selection:bg-green-900 selection:text-white">
-            {/* Background Glitch Effects (Simplified) */}
-            <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-900 via-transparent to-transparent" />
+        <div className="min-h-screen bg-[#FFFBED] text-black font-sans p-4 md:p-10 relative overflow-y-auto selection:bg-[#FF3366] selection:text-white">
+            {/* Brutalist Grid Background */}
+            <div className="pointer-events-none absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '40px 40px' }} />
 
             {/* Back Button */}
-            <Link href="/dashboard" className="absolute top-6 left-6 z-50 flex items-center gap-2 text-green-500/70 hover:text-green-400 transition-colors bg-black/50 px-4 py-2 rounded-lg border border-green-900/50 hover:border-green-500/50">
-                <ArrowLeft className="w-4 h-4" />
-                <span className="font-bold uppercase tracking-widest text-xs">Abort</span>
+            <Link href="/dashboard" className="absolute top-6 left-6 z-50 flex items-center gap-2 border-4 border-black bg-white px-4 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-black">
+                <ArrowLeft className="w-5 h-5 stroke-[3]" />
+                <span className="font-black uppercase tracking-widest text-sm">ABORT</span>
             </Link>
 
-            <main className="max-w-4xl mx-auto relative z-10 flex flex-col items-center gap-8 pt-10 md:pt-0">
+            <main className="max-w-5xl mx-auto relative z-10 flex flex-col items-center gap-12 pt-20 md:pt-10">
 
                 {/* Header */}
-                <div className="text-center space-y-2">
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase glitch-text">
-                        The <span className="text-red-600">Roast</span>
+                <div className="text-center space-y-4 border-b-8 border-black pb-8 w-full animate-in fade-in slide-in-from-top-10 duration-700">
+                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black hover:scale-105 transition-transform cursor-default">
+                        THE <span className="bg-[#FF3366] text-white px-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] inline-block hover:-rotate-3 transition-transform">ROAST</span>
                     </h1>
-                    <p className="text-green-700 uppercase tracking-widest text-xs md:text-sm">
-                        Authin // Brutal Career Coaching
+                    <p className="bg-[#EAFF00] border-4 border-black inline-block px-4 py-2 text-black font-black uppercase tracking-widest text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
+                        BRUTAL CAREER COACHING
                     </p>
                 </div>
 
                 {/* Error Message */}
                 {(error || errorMsg) && (
-                    <div className="w-full max-w-lg bg-red-950/30 border border-red-500/50 p-4 rounded-xl flex items-center gap-3 text-red-400">
-                        <AlertTriangle className="w-5 h-5 shrink-0" />
-                        <p className="text-sm font-bold">{errorMsg || "An unexpected error occurred. Check console."}</p>
+                    <div className="w-full max-w-2xl bg-white border-8 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-6 flex items-center gap-4 text-black">
+                        <div className="bg-[#FF3366] p-3 border-4 border-black text-white">
+                            <AlertTriangle className="w-8 h-8 stroke-[3]" />
+                        </div>
+                        <p className="text-xl font-black uppercase">{errorMsg || "AN UNEXPECTED ERROR OCCURRED. CHECK CONSOLE."}</p>
                     </div>
                 )}
 
                 {/* Input Zone - Only show if not loading/done */}
                 {!isLoading && !object && (
-                    <div className="w-full max-w-lg border-2 border-dashed border-green-800 rounded-xl p-10 flex flex-col items-center justify-center gap-4 hover:border-red-600 transition-colors group cursor-pointer bg-black/50">
+                    <div className="w-full max-w-2xl border-8 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-12 flex flex-col items-center justify-center gap-8 hover:-translate-y-4 hover:shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group animate-in fade-in zoom-in-95 slide-in-from-bottom-12 duration-1000">
                         <input
                             type="file"
                             accept=".pdf"
@@ -108,9 +110,11 @@ export default function RoastPage() {
                             className="hidden"
                             id="resume-upload"
                         />
-                        <label htmlFor="resume-upload" className="flex flex-col items-center cursor-pointer">
-                            <Upload className="w-12 h-12 text-green-700 group-hover:text-red-500 transition-transform group-hover:scale-110 duration-300" />
-                            <span className="text-sm text-green-600 mt-2 font-bold group-hover:text-red-400">
+                        <label htmlFor="resume-upload" className="flex flex-col items-center cursor-pointer w-full">
+                            <div className="border-4 border-black bg-[#EAFF00] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:bg-[#00E5FF] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                <Upload className="w-16 h-16 text-black group-hover:animate-bounce" strokeWidth={3} />
+                            </div>
+                            <span className="text-3xl text-black mt-8 font-black uppercase tracking-tight text-center">
                                 {file ? file.name : "DROP RESUME PDF HERE"}
                             </span>
                         </label>
@@ -118,9 +122,9 @@ export default function RoastPage() {
                         {file && (
                             <button
                                 onClick={handleRoast}
-                                className="mt-4 px-8 py-3 bg-red-600 text-black font-black uppercase text-lg hover:bg-red-500 hover:scale-105 active:scale-95 transition-all w-full clip-path-polygon"
+                                className="mt-8 px-10 py-5 bg-[#FF3366] text-white font-black uppercase text-2xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1.5 hover:translate-y-1.5 active:scale-95 transition-all w-full"
                             >
-                                Ignite Roast
+                                IGNITE ROAST
                             </button>
                         )}
                     </div>
@@ -128,9 +132,11 @@ export default function RoastPage() {
 
                 {/* Loading State: Scanning */}
                 {isLoading && !object && (
-                    <div className="flex flex-col items-center gap-4 animate-pulse">
-                        <Terminal className="w-16 h-16 text-red-500 animate-spin-slow" />
-                        <p className="text-xl text-red-500 font-bold uppercase blinking-cursor">
+                    <div className="flex flex-col items-center gap-8 border-8 border-black bg-[#EAFF00] p-16 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                            <Terminal className="w-20 h-20 text-black animate-spin-slow" strokeWidth={3} />
+                        </div>
+                        <p className="text-4xl text-black font-black uppercase tracking-tight blinking-cursor">
                             SCANNING LIES...
                         </p>
                     </div>
@@ -138,48 +144,63 @@ export default function RoastPage() {
 
                 {/* Result View */}
                 {object && (
-                    <div className="w-full grid md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-10 duration-700">
+                    <div className="w-full grid md:grid-cols-2 gap-10 animate-in fade-in slide-in-from-bottom-10 duration-700">
 
                         {/* Left: Burn Score */}
-                        <div className="border border-red-900/50 bg-red-950/10 p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
-                            <div className="absolute inset-0 bg-red-500/5 blur-3xl animate-pulse" />
-                            <Flame className={`w-20 h-20 mb-4 ${burnColor(object?.burn_score ?? 0)}`} />
-                            <h2 className="text-2xl font-bold uppercase text-red-500 mb-2">Burn Score</h2>
-                            <div className={`text-8xl font-black ${burnColor(object?.burn_score ?? 0)}`}>
+                        <div className="border-8 border-black bg-black p-10 flex flex-col items-center justify-center text-center relative shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-2 hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] transition-all">
+                            <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-8 group-hover:bg-[#FF3366] group-hover:text-white transition-colors text-black">
+                                <Flame className="w-24 h-24 stroke-[3]" />
+                            </div>
+                            <h2 className="text-4xl font-black uppercase text-white mb-2">BURN SCORE</h2>
+                            <div className={`text-9xl font-black tracking-tighter ${burnColor(object?.burn_score ?? 0)} drop-shadow-[4px_4px_0px_rgba(255,255,255,1)]`}>
                                 {object?.burn_score ?? 0}
                             </div>
-                            <p className="text-red-400/60 text-xs mt-2 uppercase tracking-widest">
+                            <p className="bg-white border-4 border-black px-4 py-2 text-black font-black text-xl mt-8 uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                                 {(object?.burn_score ?? 0) > 80 ? 'CRITICAL FAILURE' : (object?.burn_score ?? 0) > 50 ? 'MEDIOCRE AT BEST' : 'SURVIVABLE'}
                             </p>
                         </div>
 
                         {/* Right: The Breakdown */}
-                        <div className="space-y-6">
-                            <div className="bg-green-950/10 border border-green-900/50 p-6 rounded-xl">
-                                <h3 className="text-xl font-bold text-green-500 mb-4 border-b border-green-900 pb-2 flex items-center gap-2">
-                                    <Terminal className="w-5 h-5" /> SUMMARY
-                                </h3>
-                                <p className="text-green-300 leading-relaxed font-sans text-lg">
-                                    {object.roast_summary}
-                                </p>
+                        <div className="space-y-8">
+                            <div className="bg-white border-8 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+                                <div className="bg-[#00E5FF] border-b-8 border-black p-6">
+                                    <h3 className="text-3xl font-black text-black flex items-center gap-4 uppercase tracking-tight">
+                                        <div className="bg-white border-4 border-black p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                            <Terminal className="w-8 h-8 stroke-[3]" />
+                                        </div>
+                                        SUMMARY
+                                    </h3>
+                                </div>
+                                <div className="p-8">
+                                    <p className="text-black font-bold text-xl leading-relaxed uppercase">
+                                        {object.roast_summary}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="bg-red-950/10 border border-red-900/50 p-6 rounded-xl">
-                                <h3 className="text-xl font-bold text-red-500 mb-4 border-b border-red-900 pb-2 flex items-center gap-2">
-                                    <AlertTriangle className="w-5 h-5" /> WEAK POINTS
-                                </h3>
-                                <ul className="space-y-2">
-                                    {object.weak_points?.map((point, i) => (
-                                        <li key={i} className="flex items-start gap-2 text-red-300 font-sans">
-                                            <span className="text-red-600 mt-1">x</span>
-                                            {point}
-                                        </li>
-                                    ))}
-                                </ul>
+                            <div className="bg-white border-8 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+                                <div className="bg-[#FF3366] border-b-8 border-black p-6">
+                                    <h3 className="text-3xl font-black text-white flex items-center gap-4 uppercase tracking-tight">
+                                        <div className="bg-white border-4 border-black p-2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                            <AlertTriangle className="w-8 h-8 stroke-[3]" />
+                                        </div>
+                                        WEAK POINTS
+                                    </h3>
+                                </div>
+                                <div className="p-8">
+                                    <ul className="space-y-4">
+                                        {object.weak_points?.map((point, i) => (
+                                            <li key={i} className="flex items-start gap-4 text-black font-bold text-lg uppercase border-l-8 border-black pl-4">
+                                                <span className="text-[#FF3366] text-3xl leading-none -mt-1 font-black">X</span>
+                                                {point}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
 
-                            <button className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold uppercase rounded-xl flex items-center justify-center gap-2 transition-all">
-                                <Share2 className="w-5 h-5" /> Share Data
+                            <button className="w-full py-6 bg-[#EAFF00] border-8 border-black text-black font-black text-2xl uppercase flex items-center justify-center gap-4 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 transition-all">
+                                <Share2 className="w-8 h-8 stroke-[3]" /> SHARE DATA
                             </button>
                         </div>
                     </div>
@@ -187,12 +208,7 @@ export default function RoastPage() {
 
             </main>
 
-
-
             <style jsx global>{`
-        .clip-path-polygon {
-          clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        }
         .blinking-cursor:after {
           content: '_';
           animation: blink 1s step-end infinite;
@@ -200,9 +216,6 @@ export default function RoastPage() {
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
-        }
-        .glitch-text {
-          text-shadow: 2px 2px 0px #ff0000, -2px -2px 0px #00ff00;
         }
       `}</style>
         </div>

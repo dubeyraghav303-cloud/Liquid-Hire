@@ -78,26 +78,26 @@ export default async function JobsPage({ searchParams }: Props) {
   const loc = location;
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-slate-50 px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
+    <div className="w-full max-w-7xl mx-auto space-y-12">
+      <div className="flex flex-col gap-10 mt-4">
         
         {/* Search Form component handles client-side form submissions and shows loading state on button */}
         <JobSearchForm initialQuery={query} initialLocation={loc} />
 
         {/* Suspense boundary will trigger jobs/loading.tsx (or this fallback) when searchParams change! */}
         <Suspense key={query + loc} fallback={
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-48 w-full animate-pulse rounded-3xl bg-white shadow-sm ring-1 ring-slate-100 p-5 flex flex-col justify-between">
+              <div key={i} className="h-64 w-full animate-pulse border-8 border-black bg-white p-8 flex flex-col justify-between shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                 <div>
-                  <div className="h-4 w-3/4 bg-slate-100 rounded-md mb-2" />
-                  <div className="h-3 w-1/2 bg-slate-100 rounded-md" />
+                  <div className="h-8 w-3/4 bg-black/10 border-4 border-black/20 mb-4" />
+                  <div className="h-4 w-1/2 bg-black/10 border-2 border-black/20" />
                 </div>
-                <div className="flex justify-between border-t border-slate-50 pt-4">
-                  <div className="h-4 w-16 bg-slate-100 rounded-md" />
-                  <div className="flex gap-2">
-                    <div className="h-8 w-24 bg-slate-100 rounded-full" />
-                    <div className="h-8 w-24 bg-slate-100 rounded-full" />
+                <div className="flex justify-between border-t-8 border-black/10 pt-6">
+                  <div className="h-6 w-16 bg-black/10" />
+                  <div className="flex gap-4">
+                    <div className="h-12 w-32 bg-black/10 border-4 border-black/20" />
+                    <div className="h-12 w-32 bg-black/10 border-4 border-black/20" />
                   </div>
                 </div>
               </div>

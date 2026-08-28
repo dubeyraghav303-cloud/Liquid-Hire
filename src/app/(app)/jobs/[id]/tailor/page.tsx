@@ -4,17 +4,17 @@ import { useState, use, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { experimental_useObject as useObject } from '@ai-sdk/react';
 import { z } from 'zod';
-import { ChevronRight, Download, Wand2, Briefcase, User, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, Download, Wand2, Briefcase, User, CheckCircle2, AlertTriangle, UserCircle } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/utils/supabase/client';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 // --- PDF Generator ---
 const styles = StyleSheet.create({
     page: { flexDirection: 'column', backgroundColor: '#fff', padding: 30 },
-    header: { marginBottom: 20, borderBottom: '1px solid #ccc', paddingBottom: 10 },
+    header: { marginBottom: 20, borderBottom: '1px solid #000', paddingBottom: 10 },
     name: { fontSize: 24, fontWeight: 'bold' },
     section: { margin: 10, padding: 10 },
-    heading: { fontSize: 16, borderBottom: '1px solid #eee', marginBottom: 5, paddingBottom: 2, fontWeight: 'bold' },
+    heading: { fontSize: 16, borderBottom: '1px solid #000', marginBottom: 5, paddingBottom: 2, fontWeight: 'bold' },
     text: { fontSize: 11, marginBottom: 5, lineHeight: 1.5, fontFamily: 'Helvetica' },
     bullet: { fontSize: 11, marginBottom: 3, marginLeft: 10, fontFamily: 'Helvetica' },
 });
@@ -61,7 +61,6 @@ const tailorSchema = z.object({
 });
 
 export default function TailorPage({ params }: { params: Promise<{ id: string }> }) {
-    // Use `use` to unwrap params in Next.js 15+
     const { id } = use(params);
     const searchParams = useSearchParams();
 
@@ -69,33 +68,20 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
     const [profileName, setProfileName] = useState("Candidate");
     const [hasStarted, setHasStarted] = useState(false);
 
-    // Supabase for fetching job/profile
     const supabase = createSupabaseBrowserClient();
 
     useEffect(() => {
         async function init() {
-            // 1. Fetch Profile Name
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 const { data: p } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
                 if (p) setProfileName(p.full_name || "Candidate");
             }
 
-            // 2. Fetch Job Details
-            // If internal (uuid), fetch from DB. If external (likely not uuid or not found in DB), might be tricky.
-            // For now assuming internal job or passed state. 
-            // Since the user scrapes jobs, they might not be in DB unless saved.
-            // If existing logic assumes /jobs matches /api/jobs output, we need to handle that.
-            // Let's assume for this feature, we fetch from 'jobs' table. 
-            // If it's an external job from the scraper, usually it has a link. 
-            // If the user wants to tailor for an external job, we'd need to pass the text.
-            // For simplicity in this demo, let's fetch from 'jobs' OR fallback to a placeholder if demoing.
-
             const { data: jobData } = await supabase.from('jobs').select('*').eq('id', id).single();
             if (jobData) {
                 setJob(jobData);
             } else if (id === 'external') {
-                // Try to get from sessionStorage
                 if (typeof window !== 'undefined') {
                     const stored = sessionStorage.getItem('temp_tailor_job');
                     if (stored) {
@@ -107,8 +93,6 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
                         }
                     }
                 }
-
-                // If still no job (e.g. direct nav), try URL params as backup (for small descriptions)
                 if (!job && searchParams.get('title')) {
                     setJob({
                         title: searchParams.get('title') || "Unknown Role",
@@ -117,7 +101,6 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
                     });
                 }
             } else {
-                // Fallback/Mock for demo
                 setJob({
                     title: "Senior Product Engineer",
                     company: "Tech Corp",
@@ -135,7 +118,7 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
         schema: tailorSchema,
         onError: (err) => {
             console.error("Tailor Error:", err);
-            setErrorMsg(`Tailor Failed: ${err.message || "Unknown error"}`);
+            setErrorMsg(`TAILOR FAILED: ${err.message || "UNKNOWN ERROR"}`);
             setHasStarted(false);
         },
     });
@@ -146,58 +129,64 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
         setHasStarted(true);
         submit({
             jobId: id,
-            jobDescription: job.description || job.title // Fallback
+            jobDescription: job.description || job.title
         });
     };
 
-    if (!job) return <div className="p-10 text-center">Loading Job Context...</div>;
+    if (!job) return (
+        <div className="flex h-[500px] w-full items-center justify-center bg-[#FFFBED] border-8 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+            <Wand2 className="h-12 w-12 animate-spin text-black stroke-[3]" />
+        </div>
+    );
 
     return (
-        <div className="h-[calc(100vh-80px)] flex bg-slate-50 overflow-hidden">
+        <div className="flex flex-col md:flex-row border-8 border-black bg-[#FFFBED] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] min-h-[calc(100vh-120px)] mb-10 overflow-hidden selection:bg-[#FF3366] selection:text-white">
+            
             {/* LEFT: JOB CONTEXT */}
-            <div className="w-1/2 p-6 border-r border-slate-200 overflow-y-auto bg-white/50">
-                <div className="mb-6">
-                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Target Role</span>
-                    <h1 className="text-3xl font-bold text-slate-900 mt-2">{job.title}</h1>
-                    <p className="text-slate-500 font-medium">{job.company}</p>
+            <div className="md:w-1/3 p-8 border-b-8 md:border-b-0 md:border-r-8 border-black bg-white flex flex-col gap-6 z-10">
+                <div>
+                    <span className="bg-[#00E5FF] border-4 border-black text-black px-4 py-2 font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block mb-6">TARGET ROLE</span>
+                    <h1 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none">{job.title}</h1>
+                    <p className="text-xl font-bold text-black/70 mt-2 bg-[#EAFF00] inline-block px-2 border-2 border-black uppercase">{job.company}</p>
                 </div>
 
-                <div className="prose prose-sm prose-slate max-w-none">
-                    <h3 className="text-slate-900 font-semibold mb-2">Job Description</h3>
-                    <div className="whitespace-pre-wrap text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100/50">
+                <div className="flex-1 flex flex-col">
+                    <h3 className="text-2xl font-black text-black uppercase tracking-tight mb-4 flex items-center gap-2"><Briefcase className="stroke-[3]"/> JOB DESCRIPTION</h3>
+                    <div className="flex-1 overflow-y-auto max-h-[600px] border-4 border-black bg-[#FFFBED] p-6 text-sm font-bold text-black uppercase shadow-inner whitespace-pre-wrap leading-relaxed">
                         {job.description}
                     </div>
                 </div>
             </div>
 
             {/* RIGHT: CHAMELEON EDITOR */}
-            <div className="w-1/2 flex flex-col bg-slate-100/50 relative">
+            <div className="md:w-2/3 flex flex-col bg-[#FFFBED] relative">
+                
                 {/* Action Bar */}
-                <div className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 shadow-sm z-10">
-                    <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-amber-400 animate-pulse' : object ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                        <span className="text-sm font-semibold text-slate-700">
-                            {isLoading ? 'AI Tailoring...' : object ? 'Tailored Resume Ready' : 'Resume Chameleon™'}
+                <div className="border-b-8 border-black bg-[#EAFF00] flex flex-col sm:flex-row items-center justify-between p-6 z-10 gap-4 shadow-sm">
+                    <div className="flex items-center gap-4 bg-white border-4 border-black px-4 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <div className={`w-4 h-4 border-2 border-black ${isLoading ? 'bg-[#FF3366] animate-pulse' : object ? 'bg-[#00E5FF]' : 'bg-black'}`} />
+                        <span className="text-lg font-black text-black uppercase tracking-widest">
+                            {isLoading ? 'AI TAILORING...' : object ? 'TAILORED RESUME READY' : 'RESUME CHAMELEON™'}
                         </span>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-4">
                         {!object && !isLoading && (
                             <button
                                 onClick={handleTailor}
-                                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                                className="flex items-center gap-2 border-4 border-black bg-[#FF3366] text-white px-8 py-3 text-lg font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
                             >
-                                <Wand2 size={16} />
-                                Auto-Tailor
+                                <Wand2 size={24} className="stroke-[3]" />
+                                AUTO-TAILOR
                             </button>
                         )}
                         {object && (
                             <PDFDownloadLink document={<TailoredPDF data={object} fullName={profileName} />} fileName="Tailored_Resume.pdf">
                                 {/* @ts-ignore */}
                                 {({ loading }) => (
-                                    <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
-                                        <Download size={16} />
-                                        {loading ? 'Preparing...' : 'Download PDF'}
+                                    <button className="flex items-center gap-2 border-4 border-black bg-black text-white px-8 py-3 text-lg font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:text-black hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
+                                        <Download size={24} className="stroke-[3]" />
+                                        {loading ? 'PREPARING...' : 'DOWNLOAD PDF'}
                                     </button>
                                 )}
                             </PDFDownloadLink>
@@ -206,94 +195,99 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-8 relative">
+                <div className="flex-1 overflow-y-auto p-4 md:p-12 relative bg-gray-100">
+                    
                     {/* Default State */}
                     {!hasStarted && !isLoading && !object && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-[#FFFBED]">
                             {errorMsg ? (
-                                <div className="bg-red-50 p-6 rounded-2xl max-w-md border border-red-100 flex flex-col items-center">
-                                    <div className="bg-red-100 p-3 rounded-full mb-3 text-red-500">
-                                        <CheckCircle2 size={32} className="rotate-45" />
-                                        {/* Using CheckCircle heavily styled as X or just use simpler icon if available in import */}
+                                <div className="border-8 border-black bg-white p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center">
+                                    <div className="bg-[#FF3366] border-4 border-black p-4 mb-4 text-white">
+                                        <AlertTriangle size={48} className="stroke-[3]" />
                                     </div>
-                                    <p className="text-red-600 font-semibold mb-2">Generation Failed</p>
-                                    <p className="text-sm text-red-500">{errorMsg}</p>
+                                    <p className="text-3xl font-black text-black uppercase">GENERATION FAILED</p>
+                                    <p className="text-lg font-bold text-black/70 mt-2 uppercase">{errorMsg}</p>
                                     <button
                                         onClick={() => setErrorMsg(null)}
-                                        className="mt-4 text-xs font-bold text-red-700 bg-red-100 px-3 py-1 rounded hover:bg-red-200 transition"
+                                        className="mt-8 border-4 border-black bg-[#EAFF00] px-6 py-2 text-xl font-black text-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                                     >
-                                        Dismiss
+                                        DISMISS
                                     </button>
                                 </div>
                             ) : (
-                                <>
-                                    <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-                                        <User size={32} className="text-indigo-400" />
+                                <div className="border-8 border-black bg-white p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center hover:-translate-y-2 hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] transition-all">
+                                    <div className="bg-[#00E5FF] border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        <UserCircle size={48} className="stroke-[3] text-black" />
                                     </div>
-                                    <p className="text-lg font-medium text-slate-600">Ready to Tailor</p>
-                                    <p className="text-sm mt-1">Click "Auto-Tailor" to rewrite your resume for this role.</p>
-                                </>
+                                    <p className="text-4xl font-black text-black uppercase tracking-tight">READY TO TAILOR</p>
+                                    <p className="text-lg font-bold text-black/70 mt-2 uppercase">CLICK "AUTO-TAILOR" TO REWRITE YOUR RESUME FOR THIS ROLE.</p>
+                                </div>
                             )}
                         </div>
                     )}
 
                     {/* Loading State */}
                     {isLoading && (
-                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm transition-all duration-500">
-                            <div className="relative">
-                                <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <Wand2 size={24} className="text-indigo-600" />
+                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#FFFBED] p-8">
+                            <div className="border-8 border-black bg-white p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center">
+                                <div className="bg-[#EAFF00] border-4 border-black p-6 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                                    <Wand2 size={64} className="stroke-[3] text-black animate-spin-slow" />
                                 </div>
+                                <h3 className="text-4xl font-black text-black uppercase tracking-tight">TAILORING RESUME...</h3>
+                                <p className="text-lg font-bold text-black/70 mt-2 uppercase bg-[#00E5FF] px-4 py-1 border-2 border-black animate-pulse">ANALYZING JOB DESCRIPTION & MATCHING SKILLS</p>
                             </div>
-                            <h3 className="mt-6 text-xl font-bold text-slate-800">Tailoring Your Resume...</h3>
-                            <p className="text-slate-500 mt-2 text-sm animate-pulse">Analyzing Job Description & Matching Skills</p>
                         </div>
                     )}
 
+                    {/* Result (Professional Rendering) */}
                     {object && (
-                        <div className="max-w-2xl mx-auto bg-white shadow-xl shadow-slate-200/50 min-h-[800px] p-10 rounded-sm ring-1 ring-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <div className="max-w-3xl mx-auto bg-white border border-gray-300 shadow-md min-h-[800px] p-10 md:p-14 animate-in fade-in slide-in-from-bottom-10 duration-700 font-sans text-gray-900">
+                            
                             {/* Header */}
-                            <div className="border-b-2 border-slate-800 pb-4 mb-6">
-                                <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">{profileName}</h1>
+                            <div className="border-b-2 border-gray-900 pb-4 mb-8">
+                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{profileName}</h1>
                             </div>
 
-                            {/* Summary */}
-                            <div className="mb-6">
-                                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1">Professional Profile</h2>
-                                <p className="text-sm text-slate-700 leading-relaxed">{object.professional_summary}</p>
-                            </div>
-
-                            {/* Skills */}
-                            <div className="mb-6">
-                                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1">Core Competencies</h2>
-                                <div className="flex flex-wrap gap-2">
-                                    {object.skills_to_highlight?.map((skill, i) => (
-                                        <span key={i} className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md font-medium">
-                                            {skill}
-                                        </span>
-                                    ))}
+                            <div className="space-y-8">
+                                {/* Summary */}
+                                <div>
+                                    <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Professional Profile</h2>
+                                    <p className="text-sm text-gray-700 leading-relaxed">{object.professional_summary}</p>
                                 </div>
-                            </div>
 
-                            {/* Experience */}
-                            <div>
-                                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-100 pb-1">Professional Experience</h2>
-                                {object.experience_bullets?.map((exp, i) => (
-                                    exp ? (
-                                        <div key={i} className="mb-4 break-inside-avoid">
-                                            <div className="flex justify-between items-baseline mb-1">
-                                                <h3 className="text-sm font-bold text-slate-900">{exp.role}</h3>
-                                                <span className="text-xs text-slate-500 font-medium">{exp.company}</span>
-                                            </div>
-                                            <ul className="list-disc ml-4 space-y-1">
-                                                {exp.bullets?.map((b, j) => (
-                                                    <li key={j} className="text-xs text-slate-600 pl-1">{b}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ) : null
-                                ))}
+                                {/* Skills */}
+                                <div>
+                                    <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Core Competencies</h2>
+                                    <div className="flex flex-wrap gap-x-2 gap-y-1">
+                                        {object.skills_to_highlight?.map((skill, i) => (
+                                            <span key={i} className="text-sm text-gray-700">
+                                                {skill}{i < object.skills_to_highlight.length - 1 ? ',' : ''}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Experience */}
+                                <div>
+                                    <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 border-b border-gray-200 pb-1">Professional Experience</h2>
+                                    <div className="space-y-6">
+                                        {object.experience_bullets?.map((exp, i) => (
+                                            exp ? (
+                                                <div key={i}>
+                                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
+                                                        <h3 className="text-base font-bold text-gray-900">{exp.role}</h3>
+                                                        <span className="text-sm font-medium text-gray-600">{exp.company}</span>
+                                                    </div>
+                                                    <ul className="list-disc ml-5 space-y-1.5 text-sm text-gray-700">
+                                                        {exp.bullets?.map((b, j) => (
+                                                            <li key={j} className="pl-1 leading-relaxed">{b}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            ) : null
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
