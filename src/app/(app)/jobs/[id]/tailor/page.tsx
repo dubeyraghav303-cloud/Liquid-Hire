@@ -261,7 +261,7 @@ export default function TailorPage({ params }: { params: Promise<{ id: string }>
                                     <div className="flex flex-wrap gap-x-2 gap-y-1">
                                         {object.skills_to_highlight?.map((skill, i) => (
                                             <span key={i} className="text-sm text-gray-700">
-                                                {skill}{i < object.skills_to_highlight.length - 1 ? ',' : ''}
+                                                {skill}{i < (object.skills_to_highlight?.length ?? 0) - 1 ? ',' : ''}
                                             </span>
                                         ))}
                                     </div>
